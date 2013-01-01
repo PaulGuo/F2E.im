@@ -1,0 +1,54 @@
+{% extends 'snippet/layout.html' %}
+
+{% block main %}
+    <div class="container-box">
+        <form class="form-horizontal" action='' method="POST" enctype="multipart/form-data">
+            <fieldset>
+                <div id="legend">
+                    <legend class="">用户头像设置</legend>
+                </div>
+                {{ errors|dump_errors }}
+                <div class="control-group">
+                    <!-- Avatar -->
+                    <label class="control-label" for="username">头像</label>
+                    <div class="controls">
+                        <img src="/static/avatar/b_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                        <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                        <img src="/static/avatar/s_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                        <a href="/setting/avatar">设置头像</a>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Avatar-->
+                    <label class="control-label" for="avatar">上传</label>
+                    <div class="controls">
+                        <input type="file" id="avatar" name="avatar" placeholder="" class="input-xlarge">
+                        <p class="help-block">请选择要上传的头像文件</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Button -->
+                    <div class="controls">
+                        <button class="btn btn-success">保存改动</button>
+                        <a href="/setting/avatar/gravatar" class="ml10 btn">从Gravatar获取</a>
+                        <a href="/setting" class="ml10 btn">返回设置页</a>
+                    </div>
+                </div>
+            </fieldset>
+            {{ xsrf_form_html() }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="sidenav container-box">
+        <ul>
+            <li><a href="/setting">用户中心</a></li>
+            <li class="current"><a href="/setting/avatar">设置头像</a></li>
+            <li><a href="/setting/password">设置密码</a></li>
+            <li><a href="/">返回首页</a></li>
+        </ul>
+    </div>
+{% endblock %}

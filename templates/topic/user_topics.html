@@ -1,0 +1,82 @@
+{% extends 'snippet/layout.html' %}
+
+{% block main %}
+    <div class="topics container-box user-topics">
+        <div class="ui-header">
+            <span class="bread-nav">F2E › {{ user_info.username }} › 主题列表</span>
+        </div>
+
+        <div class="ui-content">
+            {% for topic in topics.list %}
+                <div class="topic-item">
+                    <a href="/u/{{ topic.author_username }}">
+                        <img src="/static/avatar/m_{{ topic.author_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                    </a>
+                    <div class="main">
+                        <h3 class="title">
+                            <a href="/t/{{ topic.id }}#reply{{ topic.reply_count or 0 }}">{{ topic.title }}</a>
+                        </h3>
+                        <div class="meta">
+                            <span class="node"><a href="/node/{{ topic.node_slug }}">{{ topic.node_name }}</a></span> • 
+                            <span class="username">
+                                <a href="/u/{{ topic.author_username or topic.author_uid }}">{{ topic.author_username }}</a>
+                            </span> • 
+                            <span class="last-reply-time">{{ topic.last_replied_time|pretty_date }}</span> • 
+                            <span class="last-reply-username">最后回复来自
+                                <a href="/u/{{ topic.last_replied_username or topic.last_replied_uid }}">
+                                    <strong>{{ topic.last_replied_username }}</strong>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                    {% if topic.reply_count %}
+                        <div class="count">
+                            <a href="/t/{{ topic.id }}#reply{{ topic.reply_count or 0 }}">{{ topic.reply_count or 0 }}</a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            {% if topics.page.total == 0 %}
+                <div class="pl10 pr10">
+                    <div class="alert mt20">
+                        该用户暂时还没有发表过主题。
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="ui-footer">
+            <div class="pagination">
+                {{ topics.page|pagination(request.uri) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="usercard container-box">
+        <div class="ui-header">
+            <a href="/u/{{ user_info.username }}">
+                <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+            </a>
+            <div class="username">{{ user_info.username }}</div>
+            <div class="website"><a href="{{ user_info.website or '' }}">{{ user_info.website or '' }}</a></div>
+        </div>
+        <div class="ui-content">
+            <div class="status status-topic">
+                <strong><a href="/u/{{ user_info.username }}/topics">{{ user_info.counter.topics }}</a></strong> 主题
+            </div>
+            <div class="status status-reply">
+                <strong><a href="/u/{{ user_info.username }}/replies">{{ user_info.counter.replies }}</a></strong> 回复
+            </div>
+            <div class="status status-favorite">
+                <strong><a href="/u/{{ user_info.username }}/favorites">{{ user_info.counter.favorites }}</a></strong> 收藏
+            </div>
+            <div class="status status-reputation">
+                <strong>{{ user_info.reputation or 0 }}</strong> 威望
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

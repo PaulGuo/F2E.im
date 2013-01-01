@@ -1,0 +1,91 @@
+{% extends 'snippet/layout.html' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="/static/css/codehilite.css" />
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
+    <script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+{% endblock %}
+
+{% block main %}
+    <div class="notifications container-box">
+        <div class="ui-header">
+            <span class="bread-nav">F2E › 提醒消息</span>
+        </div>
+
+        <div class="ui-content">
+            {% for notification in notifications.list %}
+                <div class="notification-item">
+                    <a href="/u/{{ notification.trigger_username }}">
+                        <img src="/static/avatar/m_{{ notification.trigger_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                    </a>
+                    <div class="main">
+                        {% if notification.involved_type == 0 %}
+                            <span class="title"><a href="/u/{{ notification.trigger_username }}">{{ notification.trigger_username }}</a> 在 <a href="/t/{{ notification.involved_topic_id }}">{{ notification.involved_topic_title }}</a> 中提到了你</span>
+                        {% elif notification.involved_type == 1 %}
+                            <span class="title"><a href="/u/{{ notification.trigger_username }}">{{ notification.trigger_username }}</a> 回复了你的主题 <a href="/t/{{ notification.involved_topic_id }}">{{ notification.involved_topic_title }}</a></span>
+                        {% endif %}
+                        <div class="content">{{ notification.content|markdown|content_process }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if notifications.page.total == 0 %}
+                <div class="pl10 pr10">
+                    <div class="alert mt20">
+                        您暂时还没有收到消息提醒。
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="ui-footer">
+            <div class="pagination">
+                {{ notifications.page|pagination(request.uri) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    {% if current_user %}
+        <div class="usercard container-box">
+            <div class="ui-header">
+                <a href="/u/{{ user_info.username }}">
+                    <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                </a>
+                <div class="username">{{ user_info.username }}</div>
+                <div class="website"><a href="{{ user_info.website or '' }}">{{ user_info.website or '' }}</a></div>
+            </div>
+            <div class="ui-content">
+                <div class="status status-topic">
+                    <strong><a href="/u/{{ user_info.username }}/topics">{{ user_info.counter.topics }}</a></strong> 主题
+                </div>
+                <div class="status status-reply">
+                    <strong><a href="/u/{{ user_info.username }}/replies">{{ user_info.counter.replies }}</a></strong> 回复
+                </div>
+                <div class="status status-favorite">
+                    <strong><a href="/u/{{ user_info.username }}/favorites">{{ user_info.counter.favorites }}</a></strong> 收藏
+                </div>
+                <div class="status status-reputation">
+                    <strong>{{ user_info.reputation or 0 }}</strong> 威望
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="login-box container-box">
+            <div class="ui-content tc">
+                <a class="btn btn-small" type="button" href="/login">登录</a>
+                <a class="btn btn-small" type="button" href="/register">注册</a>
+                <a class="btn btn-small" type="button" href="/forgot">找回密码</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'snippet/layout.html' %}
+
+{% block main %}
+    <div class="container-box">
+        <form class="form-horizontal" action='' method="POST">
+            <fieldset>
+                <div id="legend" class="mb50">
+                    <legend class="">登录</legend>
+                </div>
+                {{ errors|dump_errors }}
+                <div class="control-group">
+                    <!-- E-mail -->
+                    <label class="control-label" for="email">E-mail</label>
+                    <div class="controls">
+                        <input type="text" id="email" name="email" placeholder="" class="input-xlarge">
+                        <p class="help-block">请输入您注册时所填邮箱</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Password-->
+                    <label class="control-label" for="password">密码</label>
+                    <div class="controls">
+                        <input type="password" id="password" name="password" placeholder="" class="input-xlarge">
+                        <p class="help-block">请输入您的密码（不少于4个字符）</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Button -->
+                    <div class="controls">
+                        <button class="btn btn-success">登录</button>
+                        <a href="/register" class="ml10 mr10 btn">注册账号</a>
+                        <a href="/forgot" class="btn">忘记密码了</a>
+                    </div>
+                </div>
+            </fieldset>
+            {{ xsrf_form_html() }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="sidenav container-box">
+        <ul>
+            <li class="current"><a href="/setting">用户中心</a></li>
+            <li><a href="/setting/avatar">设置头像</a></li>
+            <li><a href="/setting/password">设置密码</a></li>
+            <li><a href="/">返回首页</a></li>
+        </ul>
+    </div>
+{% endblock %}

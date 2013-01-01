@@ -1,0 +1,177 @@
+{% extends 'snippet/layout.html' %}
+
+{% block main %}
+    {#
+    <ul class="news container-box">
+        <li><a href="#">HTML5(目前)无法帮你实现的五件事</a></li>
+        <li><a href="#">DNS优化的原理和方法</a></li>
+        <li><a href="#">浅谈互联网产品前期设计方法</a></li>
+        <li><a href="#">如何在Google成为优秀的产品经理?</a></li>
+        <li><a href="#">页面前端的水有多深？</a></li>
+        <li><a href="#">如何利用互联网工具调研网站</a></li>
+    </ul>
+    #}
+
+    <div class="topics container-box deprecated-mt10">
+        {% for topic in topics.list %}
+            <div class="topic-item">
+                <a href="/u/{{ topic.author_username }}">
+                    <img src="/static/avatar/m_{{ topic.author_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                </a>
+                <div class="main">
+                    <h3 class="title">
+                        <a href="/t/{{ topic.id }}#reply{{ topic.reply_count or 0 }}">{{ topic.title }}</a>
+                    </h3>
+                    <div class="meta">
+                        <span class="node"><a href="/node/{{ topic.node_slug }}">{{ topic.node_name }}</a></span> • 
+                        <span class="username">
+                            <a href="/u/{{ topic.author_username or topic.author_uid }}">{{ topic.author_username }}</a>
+                        </span> • 
+                        {% if topic.last_replied_time %}
+                            <span class="last-reply-time">{{ topic.last_replied_time|pretty_date }}</span> • 
+                            <span class="last-reply-username">最后回复来自
+                                <a href="/u/{{ topic.last_replied_username or topic.last_replied_uid }}">
+                                    <strong>{{ topic.last_replied_username }}</strong>
+                                </a>
+                            </span>
+                        {% else %}
+                            <span class="created-time">{{ topic.created|pretty_date }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if topic.reply_count %}
+                    <div class="count">
+                        <a href="/t/{{ topic.id }}#reply{{ topic.reply_count or 0 }}">{{ topic.reply_count or 0 }}</a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="pagination">
+            {{ topics.page|pagination(request.uri) }}
+        </div>
+    </div>
+
+    <div class="nodes-cloud container-box mt10">
+        <h4 class="title">F2E / 常见节点导航</h4>
+        <ul>
+            {% for plane in planes %}
+                <li>
+                    <label for="">{{ plane.name }}</label>
+                    <span class="nodes">
+                        {% for node in plane.nodes %}
+                            <a href="/node/{{ node.slug }}">{{ node.name }}</a>
+                        {% endfor %}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    {% if current_user %}
+        <div class="usercard container-box">
+            <div class="ui-header">
+                <a href="/u/{{ user_info.username }}">
+                    <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                </a>
+                <div class="username">{{ user_info.username }}</div>
+                <div class="website"><a href="{{ user_info.website or '' }}">{{ user_info.website or '' }}</a></div>
+            </div>
+            <div class="ui-content">
+                <div class="status status-topic">
+                    <strong><a href="/u/{{ user_info.username }}/topics">{{ user_info.counter.topics }}</a></strong> 主题
+                </div>
+                <div class="status status-reply">
+                    <strong><a href="/u/{{ user_info.username }}/replies">{{ user_info.counter.replies }}</a></strong> 回复
+                </div>
+                <div class="status status-favorite">
+                    <strong><a href="/u/{{ user_info.username }}/favorites">{{ user_info.counter.favorites }}</a></strong> 收藏
+                </div>
+                <div class="status status-reputation">
+                    <strong>{{ user_info.reputation or 0 }}</strong> 威望
+                </div>
+            </div>
+        </div>
+        {% if user_info.counter.notifications %}
+            <div class="alert mt10 mb10">
+                <span>
+                    <a href="/notifications">{{ user_info.nickname or user_info.username }}，你有{{ user_info.counter.notifications }}条未读提醒，去看看吧</a>
+                </span>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="login-box container-box">
+            <div class="ui-content tc">
+                <a class="btn btn-small" type="button" href="/login">登录</a>
+                <a class="btn btn-small" type="button" href="/register">注册</a>
+                <a class="btn btn-small" type="button" href="/forgot">找回密码</a>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="sidebox container-box mt10">
+        <div class="ui-header">
+            <span class="title">微信公共帐号</span>
+        </div>
+        <div class="ui-content">
+            <img src="/static/images/qrcode_for_gh_81ac76ebf8e3_258.jpg" alt="" />
+        </div>
+    </div>
+
+    <div class="sidebox container-box mt10 hot-nodes">
+        <div class="ui-header">
+            <span class="title">最热节点</span>
+        </div>
+        <div class="ui-content">
+            {% for node in hot_nodes %}
+                <a href="/node/{{ node.slug }}">{{ node.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="sidebox container-box mt10 friends">
+        <div class="ui-header">
+            <span class="title">友情社区</span>
+        </div>
+        <div class="ui-content">
+            <p><a href="http://python-china.org"><img src="/static/images/python_china_logo.jpg" alt="" /></a></p>
+            <p><a href="http://ruby-china.org"><img src="/static/images/ruby_china_logo.png" alt="" /></a></p>
+        </div>
+    </div>
+
+    <div class="sidebox container-box mt10 friends">
+        <div class="ui-header">
+            <span class="title">我们的标志</span>
+        </div>
+        <div class="ui-content">
+            <p><a href="http://f2e.im"><img src="/static/images/f2e.im.logo.png" alt="" /></a></p>
+        </div>
+    </div>
+
+    <div class="sidebox container-box mt10 community-status">
+        <div class="ui-header">
+            <span class="title">运行状态</span>
+        </div>
+        <div class="ui-content">
+            <dl>
+                <dt>注册成员</dt>
+                <dd>{{ status_counter.users }}</dd>
+            </dl>
+            <dl>
+                <dt>结点</dt>
+                <dd>{{ status_counter.nodes }}</dd>
+            </dl>
+            <dl>
+                <dt>主题</dt>
+                <dd>{{ status_counter.topics }}</dd>
+            </dl>
+            <dl>
+                <dt>回复</dt>
+                <dd>{{ status_counter.replies }}</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+{% endblock %}

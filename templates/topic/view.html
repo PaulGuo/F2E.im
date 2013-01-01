@@ -1,0 +1,208 @@
+{% extends 'snippet/layout.html' %}
+
+{% block title %}
+    {{ topic.title }} - F2E
+{% endblock %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="/static/css/codehilite.css" />
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
+    <script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="/static/js/widget/emmet.min.js"></script>
+    <script type="text/javascript" src="/static/js/widget/jquery.textarea.min.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            $('textarea.smart-code-support').tabby();
+            emmet.require('textarea').setup({
+                pretty_break: false, // enable formatted line breaks (when inserting // between opening and closing tag)
+                use_tab: false       // expand abbreviations by Tab key
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            $('.J_topicVote').click(function(e) {
+                var _node = $(this);
+                var _errorMap = {
+                    topic_not_exist: '主题不存在',
+                    can_not_vote_your_topic: '不能喜欢自己的主题',
+                    already_voted: '感谢已经表示过',
+                };
+                e.preventDefault();
+                $.getJSON(_node.attr('href'), function(data) {
+                    if(data.success) {
+                        _node.html('<span class="f11 gray" style="text-shadow: 0px 1px 0px #fff;">感谢已表示</span>');
+                    } else {
+                        _node.html('<span>' + _errorMap[data.message] + '</span>');
+                    }
+                });
+            });
+
+            $('.J_topicFavorite').click(function(e) {
+                var _node = $(this);
+                var _errorMap = {
+                    topic_not_exist: '主题不存在',
+                    can_not_favorite_your_topic: '不能收藏自己的主题',
+                    already_favorited: '之前已经收藏过了',
+                };
+                e.preventDefault();
+                $.getJSON(_node.attr('href'), function(data) {
+                    if(data.success) {
+                        _node.html('<span class="f11 gray" style="text-shadow: 0px 1px 0px #fff;">收藏成功</span>');
+                    } else {
+                        _node.html('<span>' + _errorMap[data.message] + '</span>');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block main %}
+    <div class="topic-detail container-box">
+        <div class="ui-header">
+            <a href="/u/{{ topic.author_username or topic.author_uid }}">
+                <img src="/static/avatar/m_{{ topic.author_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+            </a>
+            <div class="main">
+                <h3 class="title">{{ topic.title }}</h3>
+                <div class="meta">
+                    <span class="node"><a href="/node/{{ topic.node_slug }}">{{ topic.node_name }}</a></span> • 
+                    <span class="username">
+                        <a href="/u/{{ topic.author_username or topic.author_uid }}">{{ topic.author_username }}</a>
+                    </span> • 
+                    {% if topic.last_replied_time %}
+                        <span class="created-time">发表于 {{ topic.created|pretty_date }}</span> • 
+                        <span class="last-reply-username">最后回复来自
+                            <a href="/u/{{ topic.last_replied_username or topic.last_replied_uid }}">
+                                <strong>{{ topic.last_replied_username }}</strong>
+                            </a>
+                        </span> • 
+                        <span class="last-reply-time">{{ topic.last_replied_time|pretty_date }}</span>
+                    {% else %}
+                        <span class="created-time">发表于 {{ topic.created|pretty_date }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="ui-content">
+            {{ topic.content|markdown|content_process }}
+        </div>
+        <div class="ui-footer">
+            <a href="/favorite?topic_id={{ topic.id }}" class="J_topicFavorite">加入收藏</a>
+            <a href="#" onclick="window.open('https://twitter.com/intent/tweet?hashtags={{ topic.node_slug }}&text={{ topic.title }}&url=http://{{ request.host }}{{ request.uri }}');">Tweet</a>
+            <a href="#" onclick="window.open('http://service.weibo.com/share/share.php?url=http://{{ request.host }}{{ request.uri }}&title=F2E%20-%20{{ topic.title }}', '_blank', 'width=550, height=370');">新浪微博</a>
+            <a href="/vote?topic_id={{ topic.id }}" class="J_topicVote">喜欢</a>
+            {% if current_user and current_user.uid == topic.author_id %}
+                <a href="/t/edit/{{ topic.id }}" class="fr">编辑主题</a>
+            {% endif %}
+            <span class="hits fr mr10">{{ topic.hits or 0 }} 次点击</span>
+        </div>
+    </div>
+
+    {% if not replies.page.total == 0 %}
+    <div class="topic-reply container-box mt10">
+        <div class="ui-header">
+            <span>共收到{{ replies.page.total }}条回复</span>
+        </div>
+        <div class="ui-content">
+            {% for reply in replies.list %}
+                <div class="reply-item">
+                    <a href="/u/{{ reply.author_username }}">
+                        <img src="/static/avatar/m_{{ reply.author_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                    </a>
+                    <div class="main">
+                        <div class="meta">
+                            <a href="/u/{{ reply.author_username }}" class="reply-username">
+                                <span class="username">{{ reply.author_username }}</span>
+                            </a>
+                            <span class="time">{{ reply.created|pretty_date }}</span>
+                            {% if current_user and current_user.uid == reply.author_id %}
+                                <a href="/reply/edit/{{ reply.id }}">编辑回复</a>
+                            {% endif %}
+                        </div>
+                        <span class="content">{{ reply.content|markdown|content_process }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="ui-footer">
+            <div class="pagination pagination-mini">
+                {{ replies.page|pagination(request.uri) }}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert mt20">
+        暂无回复，说出你的观点吧
+    </div>
+    {% endif %}
+
+    <div class="topic-reply-create container-box mt10">
+        {% if current_user %}
+            <div class="ui-header">
+                <span class="title">创建新的回复</span>
+            </div>
+            <div class="ui-content">
+                <form class="mt10" action="" method="post">
+                    {{ errors|dump_errors }}
+                    <textarea rows="3" class="content mt5 smart-code-support" placeholder="回复内容" name="content"></textarea>
+                    <input name="tid" type="hidden" value="{{ topic.id }}" />
+                    <input type="submit" id="checkall" class="btn btn-small" value="立即回复">
+                    {{ xsrf_form_html() }}
+                </form>
+            </div>
+        {% else %}
+            <div class="ui-header">
+                <span class="title">登录后即可参与回复</span>
+            </div>
+            <div class="ui-content">
+                <a class="btn btn-small" type="button" href="/login">登录</a>
+                <a class="btn btn-small" type="button" href="/register">注册</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    {% if current_user %}
+        <div class="usercard container-box">
+            <div class="ui-header">
+                <a href="/u/{{ user_info.username }}">
+                    <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                </a>
+                <div class="username">{{ user_info.username }}</div>
+                <div class="website"><a href="{{ user_info.website or '' }}">{{ user_info.website or '' }}</a></div>
+            </div>
+            <div class="ui-content">
+                <div class="status status-topic">
+                    <strong><a href="/u/{{ user_info.username }}/topics">{{ user_info.counter.topics }}</a></strong> 主题
+                </div>
+                <div class="status status-reply">
+                    <strong><a href="/u/{{ user_info.username }}/replies">{{ user_info.counter.replies }}</a></strong> 回复
+                </div>
+                <div class="status status-favorite">
+                    <strong><a href="/u/{{ user_info.username }}/favorites">{{ user_info.counter.favorites }}</a></strong> 收藏
+                </div>
+                <div class="status status-reputation">
+                    <strong>{{ user_info.reputation or 0 }}</strong> 威望
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="login-box container-box">
+            <div class="ui-content tc">
+                <a class="btn btn-small" type="button" href="/login">登录</a>
+                <a class="btn btn-small" type="button" href="/register">注册</a>
+                <a class="btn btn-small" type="button" href="/forgot">找回密码</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

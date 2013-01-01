@@ -1,0 +1,82 @@
+{% extends 'snippet/layout.html' %}
+
+{% block main %}
+    <div class="topics container-box user-topics">
+        <div class="ui-header">
+            <span class="bread-nav">F2E › {{ user_info.username }} › 收藏的主题列表</span>
+        </div>
+
+        <div class="ui-content">
+            {% for favorite in favorites.list %}
+                <div class="topic-item">
+                    <a href="/u/{{ favorite.author_username }}">
+                        <img src="/static/avatar/m_{{ favorite.author_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                    </a>
+                    <div class="main">
+                        <h3 class="title">
+                            <a href="/t/{{ favorite.id }}">{{ favorite.title }}</a>
+                        </h3>
+                        <div class="meta">
+                            <span class="node"><a href="/node/{{ favorite.node_slug }}">{{ favorite.node_name }}</a></span> • 
+                            <span class="username">
+                                <a href="/u/{{ favorite.author_username or favorite.author_uid }}">{{ favorite.author_username }}</a>
+                            </span> • 
+                            <span class="last-reply-time">{{ favorite.last_replied_time|pretty_date }}</span> • 
+                            <span class="last-reply-username">最后回复来自
+                                <a href="/u/{{ favorite.last_replied_username or favorite.last_replied_uid }}">
+                                    <strong>{{ favorite.last_replied_username }}</strong>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                    {% if favorite.reply_count %}
+                        <div class="count">
+                            <a href="/t/{{ favorite.id }}">{{ favorite.reply_count or 0 }}</a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            {% if favorites.page.total == 0 %}
+                <div class="pl10 pr10">
+                    <div class="alert mt20">
+                        该用户暂时还没有收藏过主题。
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="ui-footer">
+            <div class="pagination">
+                {{ favorites.page|pagination(request.uri) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="usercard container-box">
+        <div class="ui-header">
+            <a href="/u/{{ user_info.username }}">
+                <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+            </a>
+            <div class="username">{{ user_info.username }}</div>
+            <div class="website">{{ user_info.website or '' }}</div>
+        </div>
+        <div class="ui-content">
+            <div class="status status-topic">
+                <strong><a href="/u/{{ user_info.username }}/topics">{{ user_info.counter.topics }}</a></strong> 主题
+            </div>
+            <div class="status status-reply">
+                <strong><a href="/u/{{ user_info.username }}/replies">{{ user_info.counter.replies }}</a></strong> 回复
+            </div>
+            <div class="status status-favorite">
+                <strong><a href="/u/{{ user_info.username }}/favorites">{{ user_info.counter.favorites }}</a></strong> 收藏
+            </div>
+            <div class="status status-reputation">
+                <strong>{{ user_info.reputation or 0 }}</strong> 威望
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

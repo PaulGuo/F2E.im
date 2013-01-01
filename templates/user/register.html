@@ -1,0 +1,70 @@
+{% extends 'snippet/layout.html' %}
+
+{% block main %}
+    <div class="container-box">
+        <form class="form-horizontal" action='' method="POST">
+            <fieldset>
+                <div id="legend" class="mb50">
+                    <legend class="">注册</legend>
+                </div>
+                {{ errors|dump_errors }}
+                <div class="control-group">
+                    <!-- Username -->
+                    <label class="control-label" for="username">用户名</label>
+                    <div class="controls">
+                        <input type="text" id="username" name="username" placeholder="" class="input-xlarge">
+                        <p class="help-block">用户名由字母开头，只能含有字母、数字或者下划线</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- E-mail -->
+                    <label class="control-label" for="email">E-mail</label>
+                    <div class="controls">
+                        <input type="text" id="email" name="email" placeholder="" class="input-xlarge">
+                        <p class="help-block">请输入你的E-mail，便于登录和找回密码</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Password-->
+                    <label class="control-label" for="password">密码</label>
+                    <div class="controls">
+                        <input type="password" id="password" name="password" placeholder="" class="input-xlarge">
+                        <p class="help-block">密码不少于4个字符</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Password -->
+                    <label class="control-label" for="password_confirm">密码（确认）</label>
+                    <div class="controls">
+                        <input type="password" id="password_confirm" name="password_confirm" placeholder="" class="input-xlarge">
+                        <p class="help-block">请再次输入密码</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Button -->
+                    <div class="controls">
+                        <button class="btn btn-success">注册</button>
+                    </div>
+                </div>
+            </fieldset>
+            {{ xsrf_form_html() }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="intro container-box sidebox">
+        <div class="ui-header">
+            <span class="title">关于</span>
+        </div>
+        <div class="ui-content">
+            <p>
+                F2E 是一个前端技术社区。我们试图将前端工程师解读为博学的Focus在前端领域的工程师，他不仅在前端领域颇有建树，还能在其它方面都有涉猎。加入到社区中来，参与分享，学习，不断提高吧。
+            </p>
+        </div>
+    </div>
+{% endblock %}

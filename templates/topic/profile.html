@@ -1,0 +1,272 @@
+{% extends 'snippet/layout.html' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="/static/css/codehilite.css" />
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
+    <script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="/static/js/base/juicer-min.js"></script>
+    <script type="text/juicer" id="J_githubTpl">
+        <ul>
+            {@each github_repos as repo}
+                {@if !repo.fork}
+                    <li>
+                        <div class="title">
+                            <a href="${repo.svn_url}" rel="nofollow" target="_blank">${repo.name}</a>
+                            <span class="watchers" title="${repo.watchers} Watchers">${repo.watchers}</span>
+                        </div>
+                        <p class="desc">
+                            ${repo.description}
+                        </p>
+                    </li>
+                {@/if}
+            {@/each}
+        </ul>
+    </script>
+    {% if user_info.github %}
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                url: 'https://api.github.com/users/{{ user_info.github }}/repos',
+                data: {},
+                success: function(data) {
+                    $('.J_githubContainer').html(juicer('#J_githubTpl', {github_repos: data.data}));
+                }
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <div class="user-page">
+        <div class="profile container-box">
+            <div class="ui-header">
+                <a href="/u/{{ user_info.username }}">
+                    <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                </a>
+                <div class="username">{{ user_info.username }}</div>
+                {% if user_info.website %}
+                    <div class="website"><a href="{{ user_info.website or '' }}">{{ user_info.website or '' }}</a></div>
+                {% endif %}
+                <div class="user-number">
+                    <div class="number">F2E第{{ user_info.uid }}号成员</div>
+                    <div class="since">入住于{{ user_info.created.date() }}</div>
+                </div>
+            </div>
+            <div class="ui-content">
+                <dl>
+                    <dt>ID</dt>
+                    <dd>{{ user_info.username }}</dd>
+                </dl>
+                {% if user_info.nickname %}
+                <dl>
+                    <dt>名号</dt>
+                    <dd>{{ user_info.nickname }}</dd>
+                </dl>
+                {% endif %}
+                {% if user_info.location %}
+                <dl>
+                    <dt>城市</dt>
+                    <dd>{{ user_info.location }}</dd>
+                </dl>
+                {% endif %}
+                {% if user_info.company %}
+                <dl>
+                    <dt>公司</dt>
+                    <dd>{{ user_info.company }}</dd>
+                </dl>
+                {% endif %}
+                <dl>
+                    <dt>Email</dt>
+                    <dd>{{ user_info.email }}</dd>
+                </dl>
+                {% if user_info.twitter %}
+                <dl>
+                    <dt>Twitter</dt>
+                    <dd><a href="http://twitter.com/{{ user_info.twitter }}">http://twitter.com/{{ user_info.twitter }}</a></dd>
+                </dl>
+                {% endif %}
+                {% if user_info.github %}
+                <dl>
+                    <dt>Github</dt>
+                    <dd><a href="http://github.com/{{ user_info.github }}">http://github.com/{{ user_info.github }}</a></dd>
+                </dl>
+                {% endif %}
+                {% if user_info.website %}
+                <dl>
+                    <dt>Blog</dt>
+                    <dd><a href="{{ user_info.website }}">{{ user_info.website }}</a></dd>
+                </dl>
+                {% endif %}
+                {% if user_info.signature %}
+                <dl>
+                    <dt>签名</dt>
+                    <dd>{{ user_info.signature }}</dd>
+                </dl>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if user_info.github %}
+        <div class="project-lists container-box mt10">
+            <div class="ui-header">
+                <span class="title">开源项目</span>
+            </div>
+            <div class="ui-content J_githubContainer">
+                {#
+                <ul>
+                    {% for repo in github_repos if not repo.fork %}
+                        <li>
+                            <div class="title">
+                                <a href="{{ repo.svn_url }}" rel="nofollow" target="_blank">{{ repo.name }}</a>
+                                <span class="watchers" title="{{ repo.watchers }} Watchers">{{ repo.watchers }}</span>
+                            </div>
+                            <p class="desc">
+                                {{ repo.description }}
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+                #}
+                <img src="/static/images/ajax-loader.gif" alt="" class="mt5" />
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not topics.page.total == 0 %}
+        <div class="topic-lists container-box mt10">
+            <div class="ui-header">
+                <span class="title">主题列表</span>
+            </div>
+            <div class="ui-content topics">
+                {% for topic in topics.list %}
+                    <div class="topic-item">
+                        <img src="/static/avatar/m_{{ topic.author_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                        <div class="main">
+                            <h3 class="title">
+                                <a href="/t/{{ topic.id }}#reply{{ topic.reply_count or 0 }}">{{ topic.title }}</a>
+                            </h3>
+                            <div class="meta">
+                                <span class="node"><a href="/node/{{ topic.node_slug }}">{{ topic.node_name }}</a></span> • 
+                                <span class="username">
+                                    <a href="/u/{{ topic.author_username or topic.author_uid }}">{{ topic.author_username }}</a>
+                                </span> • 
+                                {% if topic.last_replied_time %}
+                                    <span class="last-reply-time">{{ topic.last_replied_time|pretty_date }}</span> • 
+                                    <span class="last-reply-username">最后回复来自
+                                        <a href="/u/{{ topic.last_replied_username or topic.last_replied_uid }}">
+                                            <strong>{{ topic.last_replied_username }}</strong>
+                                        </a>
+                                    </span>
+                                {% else %}
+                                    <span class="created-time">{{ topic.created|pretty_date }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if topic.reply_count %}
+                            <div class="count">
+                                <a href="/t/{{ topic.id }}#reply{{ topic.reply_count or 0 }}">{{ topic.reply_count or 0 }}</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                {#
+                <div class="pagination">
+                    {{ topics.page|pagination(request.uri) }}
+                </div>
+                #}
+            </div>
+            <div class="ui-footer">
+                <a href="/u/{{ user_info.username }}/topics">›› 查看更多主题</a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not replies.page.total == 0 %}
+        <div class="replies-lists container-box mt10">
+            <div class="ui-header">
+                <span class="title">回复列表</span>
+            </div>
+            <div class="ui-content topics">
+                {% for reply in replies.list %}
+                    <div class="reply-item">
+                        <div class="main">
+                            <span class="title">
+                                回复了 {{ reply.topic_author_username }} 创建的主题 <a href="/t/{{ reply.topic_id }}">{{ reply.topic_title }}</a>
+                            </span>
+                            <div class="content">
+                                {{ reply.content|markdown|content_process }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="ui-footer">
+                <a href="/u/{{ user_info.username }}/replies">›› 查看更多回复</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="user-page">
+        <div class="usercard container-box">
+            <div class="ui-content">
+                <div class="status status-topic">
+                    <strong><a href="/u/{{ user_info.username }}/topics">{{ user_info.counter.topics }}</a></strong> 主题
+                </div>
+                <div class="status status-reply">
+                    <strong><a href="/u/{{ user_info.username }}/replies">{{ user_info.counter.replies }}</a></strong> 回复
+                </div>
+                <div class="status status-favorite">
+                    <strong><a href="/u/{{ user_info.username }}/favorites">{{ user_info.counter.favorites }}</a></strong> 收藏
+                </div>
+                <div class="status status-reputation">
+                    <strong>{{ user_info.reputation or 0 }}</strong> 威望
+                </div>
+            </div>
+        </div>
+
+        {% if user_info.self_intro %}
+            <div class="self-introduction container-box mt10">
+                <div class="ui-header">
+                    <span class="title">自我介绍</span>
+                </div>
+                <div class="ui-content">
+                    {{ user_info.self_intro|nl2br }}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if user_info.douban %}
+            <div class="book-lists container-box mt10">
+                <div class="ui-header">
+                    <span class="title">正在读的书籍列表</span>
+                </div>
+                <div class="ui-content">
+                    <script type="text/javascript" src="http://www.douban.com/service/badge/{{ user_info.douban }}/?show=dolist&amp;n=12&amp;columns=3&amp;picsize=medium&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book" ></script>
+                </div>
+            </div>
+
+            <div class="book-lists container-box mt10">
+                <div class="ui-header">
+                    <span class="title">已读过的书籍列表</span>
+                </div>
+                <div class="ui-content">
+                    <script type="text/javascript" src="http://www.douban.com/service/badge/{{ user_info.douban }}/?show=collection&amp;n=12&amp;columns=3&amp;picsize=medium&amp;hidelogo=yes&amp;hideself=yes&amp;cat=book" ></script>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

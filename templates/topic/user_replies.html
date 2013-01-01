@@ -1,0 +1,69 @@
+{% extends 'snippet/layout.html' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="/static/css/codehilite.css" />
+{% endblock %}
+
+{% block main %}
+    <div class="replies-lists container-box user-replies">
+        <div class="ui-header">
+            <span class="bread-nav">F2E › {{ user_info.username }} › 回复列表</span>
+        </div>
+
+        <div class="ui-content">
+            {% for reply in replies.list %}
+                <div class="reply-item">
+                    <div class="main">
+                        <span class="title">
+                            回复了 {{ reply.topic_author_username }} 创建的主题 <a href="/t/{{ reply.topic_id }}">{{ reply.topic_title }}</a>
+                        </span>
+                        <div class="content">
+                            {{ reply.content|markdown|content_process }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if replies.page.total == 0 %}
+                <div class="pl10 pr10">
+                    <div class="alert mt20">
+                        该用户暂时还没有回复过主题。
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="ui-footer">
+            <div class="pagination">
+                {{ replies.page|pagination(request.uri) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="usercard container-box">
+        <div class="ui-header">
+            <a href="/u/{{ user_info.username }}">
+                <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+            </a>
+            <div class="username">{{ user_info.username }}</div>
+            <div class="website"><a href="{{ user_info.website or '' }}">{{ user_info.website or '' }}</a></div>
+        </div>
+        <div class="ui-content">
+            <div class="status status-topic">
+                <strong><a href="/u/{{ user_info.username }}/topics">{{ user_info.counter.topics }}</a></strong> 主题
+            </div>
+            <div class="status status-reply">
+                <strong><a href="/u/{{ user_info.username }}/replies">{{ user_info.counter.replies }}</a></strong> 回复
+            </div>
+            <div class="status status-favorite">
+                <strong><a href="/u/{{ user_info.username }}/favorites">{{ user_info.counter.favorites }}</a></strong> 收藏
+            </div>
+            <div class="status status-reputation">
+                <strong>{{ user_info.reputation or 0 }}</strong> 威望
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

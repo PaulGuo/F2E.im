@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}F2E - 前端技术社区{% endblock %}</title>
+    <script type="text/javascript" src="/static/js/base/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="/static/js/base/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/js/base/in-min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    {% block stylesheet %}{% endblock %}
+    {% block javascript %}{% endblock %}
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            $('.J_search').submit(function(e) {
+                var _node = $(this);
+                var query = _node.find('input').val();
+                e.preventDefault();
+                window.open('http://www.google.com/search?q=site:f2e.im/t%20' + query, "_blank");
+            });
+        });
+    </script>
+    <script type="text/javascript" src="/static/js/widget/jquery.scrolltotop-min.js"></script>
+    <style type="text/css">
+        .totop a {
+            display: block;
+            width: 40px;
+            height: 35px;
+            background: url('/static/images/totop.gif') no-repeat;
+            text-indent: -9999px;
+            text-decoration: none;
+        }
+
+        .totop a:hover {
+            background-position: 0 -35px;
+        }
+    </style>
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            $.scrolltotop({
+                className: 'totop',
+                controlHTML: '<a href="javascript:;">回到顶部↑</a>',
+                offsety: 10
+            });
+        });
+    </script>
+</head>
+<body>
+    
+<div class="navbar navbar-inverse navbar-fixed-top top-navbar">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/">F2E</a>
+            <div class="nav-collapse collapse">
+            
+                {% set navigation_bar = [
+                    ('/', 'topic', '社区'),
+                    ('/members', 'members', '成员'),
+                    ('/hots', 'hots', '热门'),
+                    ('/nodes', 'nodes', '结点'),
+                    ('/info', 'info', '信息'),
+                ] -%}
+            
+                {% set navigation_bar = [
+                    ('/', 'topic', '社区'),
+                ] -%}
+
+                {% set active_page = active_page|default('index') -%}
+                
+                <ul class="nav">
+                    {% for href, id, caption in navigation_bar %}
+                        <li{% if id == active_page %} class="active"{% endif %}>
+                            <a href="{{ href|e }}">{{ caption|e }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+            <form class="navbar-search pull-left J_search">
+                <input type="text" class="search-query" placeholder="Search" x-webkit-speech>
+            </form>
+            <div class="nav-collapse collapse pull-right">
+                <ul class="nav">
+                    {% if current_user %}
+                        <li><a href="/setting">{{ current_user.username }}</a></li>
+                        <li><a href="/logout">退出</a></li>
+                    {% else %}
+                        <li><a href="/login">登录</a></li>
+                        <li><a href="/register">注册</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid container mt15">
+    <div class="row-fluid">
+        <div class="span9 left">
+            {% block main %}{% endblock %}
+        </div>
+
+        <div class="span3 right">
+            {% block sidebar %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+{% include "snippet/footer.html" %}
+
+</body>
+</html>
