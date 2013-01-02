@@ -57,7 +57,13 @@ class Filters():
                 <ul>
                     <li {% if page.current == page.prev %}class="disabled"{% endif %}><a href="{{ uri|build_uri('p', page.prev) }}">«</a></li>
                     {% for p in gen_page_list(page.current, page.pages, list_rows) %}
-                        <li {% if page.current == p %}class="active"{% endif %}><a href="{{ uri|build_uri('p', p) }}">{{ p }}</a></li>
+                        <li {% if page.current == p %}class="active"{% endif %}>
+                            {% if not page.current == p %}
+                                <a href="{{ uri|build_uri('p', p) }}">{{ p }}</a>
+                            {% else %}
+                                <a href="javascript:;">{{ p }}</a>
+                            {% endif %}
+                        </li>
                     {% endfor %}
                     <li {% if page.current == page.next %}class="disabled"{% endif %}><a href="{{ uri|build_uri('p', page.next) }}">»</a></li>
                 </ul>

@@ -1,27 +1,32 @@
-/*
- Navicat Premium Data Transfer
+-- phpMyAdmin SQL Dump
+-- version 3.4.10.1
+-- http://www.phpmyadmin.net
+--
+-- 主机: localhost
+-- 生成日期: 2013 年 01 月 02 日 09:59
+-- 服务器版本: 5.1.66
+-- PHP 版本: 5.3.3
 
- Source Server         : localhost
- Source Server Type    : MySQL
- Source Server Version : 50527
- Source Host           : localhost
- Source Database       : f2e
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
- Target Server Type    : MySQL
- Target Server Version : 50527
- File Encoding         : utf-8
 
- Date: 01/01/2013 13:22:48 PM
-*/
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
 
-SET NAMES utf8;
-SET FOREIGN_KEY_CHECKS = 0;
+--
+-- 数据库: `f2e`
+--
 
--- ----------------------------
---  Table structure for `favorite`
--- ----------------------------
-DROP TABLE IF EXISTS `favorite`;
-CREATE TABLE `favorite` (
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `favorite`
+--
+
+CREATE TABLE IF NOT EXISTS `favorite` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `owner_user_id` int(11) DEFAULT NULL,
   `involved_type` int(11) DEFAULT NULL,
@@ -29,13 +34,15 @@ CREATE TABLE `favorite` (
   `involved_reply_id` int(11) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=20 ;
 
--- ----------------------------
---  Table structure for `node`
--- ----------------------------
-DROP TABLE IF EXISTS `node`;
-CREATE TABLE `node` (
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `node`
+--
+
+CREATE TABLE IF NOT EXISTS `node` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text,
   `slug` text,
@@ -48,13 +55,15 @@ CREATE TABLE `node` (
   `custom_style` text,
   `limit_reputation` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=41 ;
 
--- ----------------------------
---  Table structure for `notification`
--- ----------------------------
-DROP TABLE IF EXISTS `notification`;
-CREATE TABLE `notification` (
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `notification`
+--
+
+CREATE TABLE IF NOT EXISTS `notification` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `content` text,
   `status` int(11) DEFAULT NULL,
@@ -65,25 +74,29 @@ CREATE TABLE `notification` (
   `trigger_user_id` int(11) DEFAULT NULL,
   `occurrence_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=258 ;
 
--- ----------------------------
---  Table structure for `plane`
--- ----------------------------
-DROP TABLE IF EXISTS `plane`;
-CREATE TABLE `plane` (
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `plane`
+--
+
+CREATE TABLE IF NOT EXISTS `plane` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text,
   `created` text,
   `updated` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
--- ----------------------------
---  Table structure for `reply`
--- ----------------------------
-DROP TABLE IF EXISTS `reply`;
-CREATE TABLE `reply` (
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `reply`
+--
+
+CREATE TABLE IF NOT EXISTS `reply` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `topic_id` int(11) DEFAULT NULL,
   `author_id` int(11) DEFAULT NULL,
@@ -92,14 +105,17 @@ CREATE TABLE `reply` (
   `updated` datetime DEFAULT NULL,
   `up_vote` int(11) DEFAULT NULL,
   `down_vote` int(11) DEFAULT NULL,
+  `last_touched` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=184 ;
 
--- ----------------------------
---  Table structure for `topic`
--- ----------------------------
-DROP TABLE IF EXISTS `topic`;
-CREATE TABLE `topic` (
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `topic`
+--
+
+CREATE TABLE IF NOT EXISTS `topic` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` text,
   `content` text,
@@ -114,14 +130,30 @@ CREATE TABLE `topic` (
   `last_replied_time` datetime DEFAULT NULL,
   `up_vote` int(11) DEFAULT NULL,
   `down_vote` int(11) DEFAULT NULL,
+  `last_touched` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=24 ;
 
--- ----------------------------
---  Table structure for `transaction`
--- ----------------------------
-DROP TABLE IF EXISTS `transaction`;
-CREATE TABLE `transaction` (
+--
+-- 触发器 `topic`
+--
+DROP TRIGGER IF EXISTS `topic_delete_trigger`;
+DELIMITER //
+CREATE TRIGGER `topic_delete_trigger` BEFORE DELETE ON `topic`
+ FOR EACH ROW BEGIN
+        DELETE FROM reply WHERE reply.topic_id = OLD.id;
+        DELETE FROM notification WHERE notification.involved_topic_id = OLD.id;
+    END
+//
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `transaction`
+--
+
+CREATE TABLE IF NOT EXISTS `transaction` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` int(11) DEFAULT NULL,
   `reward` int(11) DEFAULT NULL,
@@ -132,13 +164,15 @@ CREATE TABLE `transaction` (
   `involved_reply_id` int(11) DEFAULT NULL,
   `occurrence_time` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
--- ----------------------------
---  Table structure for `user`
--- ----------------------------
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `user`
+--
+
+CREATE TABLE IF NOT EXISTS `user` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
   `email` text,
   `password` text,
@@ -158,14 +192,32 @@ CREATE TABLE `user` (
   `twitter` text,
   `github` text,
   `douban` text,
+  `last_login` datetime DEFAULT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=171 ;
 
--- ----------------------------
---  Table structure for `vote`
--- ----------------------------
-DROP TABLE IF EXISTS `vote`;
-CREATE TABLE `vote` (
+--
+-- 触发器 `user`
+--
+DROP TRIGGER IF EXISTS `user_delete_trigger`;
+DELIMITER //
+CREATE TRIGGER `user_delete_trigger` BEFORE DELETE ON `user`
+ FOR EACH ROW BEGIN
+        DELETE FROM topic WHERE topic.author_id = OLD.uid;
+        DELETE FROM reply WHERE reply.author_id = OLD.uid;
+        DELETE FROM notification WHERE notification.trigger_user_id = OLD.uid;
+        DELETE FROM notification WHERE notification.involved_user_id = OLD.uid;
+    END
+//
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `vote`
+--
+
+CREATE TABLE IF NOT EXISTS `vote` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `status` int(11) DEFAULT NULL,
   `involved_type` int(11) DEFAULT NULL,
@@ -175,6 +227,8 @@ CREATE TABLE `vote` (
   `trigger_user_id` int(11) DEFAULT NULL,
   `occurrence_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
-SET FOREIGN_KEY_CHECKS = 1;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -66,7 +66,7 @@ a.btn-small {
 .row-fluid {
     .left {
         width: 70.468%;
-        min-height: 550px;
+        min-height: 750px;
     }
 
     .right {
@@ -332,9 +332,6 @@ a.btn-small {
 }
 
 .footer {
-    position: absolute;
-    width:100%;
-    bottom: 0px;
     background: #fff;
     border-top: 1px solid #ddd;
     line-height: 13px;
@@ -607,6 +604,19 @@ a.btn-small {
                     .reply-username {
                         color: #333;
                     }
+
+                    .reply-to {
+                        margin: 0 5px 0 0;
+                        cursor: pointer;
+
+                        img {
+                            vertical-align: text-bottom;
+                        }
+                    }
+
+                    .floor {
+                        color: #999;
+                    }
                 }
 
                 .content {
@@ -816,11 +826,43 @@ form {
 
             .content {
                 padding: 10px;
+
+                h1, h2, h3, h4, h5,
+                blockquote p {
+                    font-size: 13px;
+                    line-height: 20px;
+                }
             }
         }
     }
 
     .ui-footer {
         padding: 10px;
+    }
+}
+
+.member-lists {
+    .member {
+        display: inline-block;
+        width: 60px;
+        height: 50px;
+        padding: 10px;
+        text-align: center;
+        margin: 5px 0 0 5px;
+
+        .username {
+            display: block;
+
+            a {
+                font-family: Monaco, "Microsoft YaHei", "Hiragino Sans GB W3", Tahoma, Arial;
+                color: #666;
+            }
+        }
+
+        .avatar {
+            @include border-radius(3px, 3px);
+            width: 48px;
+            height: 48px;
+        }
     }
 }

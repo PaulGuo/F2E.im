@@ -23,7 +23,7 @@
             {% for notification in notifications.list %}
                 <div class="notification-item">
                     <a href="/u/{{ notification.trigger_username }}">
-                        <img src="/static/avatar/m_{{ notification.trigger_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                        <img src="/static/avatar/m_{{ notification.trigger_avatar or 'default.png' }}" alt="" class="avatar" />
                     </a>
                     <div class="main">
                         {% if notification.involved_type == 0 %}

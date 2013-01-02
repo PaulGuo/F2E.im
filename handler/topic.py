@@ -83,6 +83,15 @@ class ViewHandler(BaseHandler):
             }
         template_variables["gen_random"] = gen_random
         template_variables["topic"] = self.topic_model.get_topic_by_topic_id(topic_id)
+
+        # check reply count and cal current_page if `p` not given
+        reply_num = 16
+        reply_count = template_variables["topic"]["reply_count"]
+        reply_last_page = (reply_count / reply_num + (reply_count % reply_num and 1)) or 1
+        page = int(self.get_argument("p", reply_last_page))
+        template_variables["reply_num"] = reply_num
+        template_variables["current_page"] = page
+
         template_variables["replies"] = self.reply_model.get_all_replies_by_topic_id(topic_id, current_page = page)
         template_variables["active_page"] = "topic"
 
@@ -133,6 +142,7 @@ class ViewHandler(BaseHandler):
         self.topic_model.update_topic_by_topic_id(form.tid.data, {
             "last_replied_by": self.current_user["uid"],
             "last_replied_time": time.strftime('%Y-%m-%d %H:%M:%S'),
+            "last_touched": time.strftime('%Y-%m-%d %H:%M:%S'),
         })
 
         # create reply notification
@@ -159,6 +169,9 @@ class ViewHandler(BaseHandler):
             if mentioned_user["uid"] == self.current_user["uid"]:
                 continue
 
+            if mentioned_user["uid"] == topic_info["author_id"]:
+                continue
+
             self.notification_model.add_new_notification({
                 "trigger_user_id": self.current_user["uid"],
                 "involved_type": 0, # 0: mention, 1: reply
@@ -176,7 +189,8 @@ class ViewHandler(BaseHandler):
             reputation = reputation + 2 * math.log(self.current_user["reputation"] or 0 + topic_time_diff.days + 10, 10)
             self.user_model.set_user_base_info_by_uid(topic_info["author_id"], {"reputation": reputation})
 
-        self.get(form.tid.data)
+        # self.get(form.tid.data)
+        self.redirect("/t/%s#reply%s" % (form.tid.data, topic_info["reply_count"] + 1))
 
 class CreateHandler(BaseHandler):
     @tornado.web.authenticated
@@ -216,7 +230,8 @@ class CreateHandler(BaseHandler):
             "content": form.content.data,
             "node_id": node["id"],
             "created": time.strftime('%Y-%m-%d %H:%M:%S'),
-            "reply_count": 0
+            "reply_count": 0,
+            "last_touched": time.strftime('%Y-%m-%d %H:%M:%S'),
         }
 
         reply_id = self.topic_model.add_new_topic(topic_info)
@@ -270,6 +285,7 @@ class EditHandler(BaseHandler):
             # "content": XssCleaner().strip(form.content.data),
             "content": form.content.data,
             "updated": time.strftime('%Y-%m-%d %H:%M:%S'),
+            "last_touched": time.strftime('%Y-%m-%d %H:%M:%S'),
         }
 
         reply_id = self.topic_model.update_topic_by_topic_id(topic_id, update_topic_info)
@@ -511,4 +527,19 @@ class FavoriteHandler(BaseHandler):
         reputation = topic_info["author_reputation"] or 0
         reputation = reputation + 2 * math.log(self.current_user["reputation"] or 0 + topic_time_diff.days + 10, 10)
         self.user_model.set_user_base_info_by_uid(topic_info["author_id"], {"reputation": reputation})
+
+class MembersHandler(BaseHandler):
+    def get(self, template_variables = {}):
+        user_info = self.current_user
+        template_variables["user_info"] = user_info
+        template_variables["user_info"]["counter"] = {
+            "topics": self.topic_model.get_user_all_topics_count(user_info["uid"]),
+            "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
+            "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
+        }
+        template_variables["members"] = self.user_model.get_users_by_latest(num = 49)
+        template_variables["active_members"] = self.user_model.get_users_by_last_login(num = 49)
+        template_variables["gen_random"] = gen_random
+        template_variables["active_page"] = "members"
+        self.render("topic/members.html", **template_variables)
 

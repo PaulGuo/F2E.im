@@ -10,7 +10,7 @@
             {% for favorite in favorites.list %}
                 <div class="topic-item">
                     <a href="/u/{{ favorite.author_username }}">
-                        <img src="/static/avatar/m_{{ favorite.author_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
+                        <img src="/static/avatar/m_{{ favorite.author_avatar or 'default.png' }}" alt="" class="avatar" />
                     </a>
                     <div class="main">
                         <h3 class="title">
@@ -21,12 +21,16 @@
                             <span class="username">
                                 <a href="/u/{{ favorite.author_username or favorite.author_uid }}">{{ favorite.author_username }}</a>
                             </span> • 
-                            <span class="last-reply-time">{{ favorite.last_replied_time|pretty_date }}</span> • 
-                            <span class="last-reply-username">最后回复来自
-                                <a href="/u/{{ favorite.last_replied_username or favorite.last_replied_uid }}">
-                                    <strong>{{ favorite.last_replied_username }}</strong>
-                                </a>
-                            </span>
+                            {% if favorite.last_replied_time %}
+                                <span class="last-touched">{{ favorite.last_touched|pretty_date }}</span> • 
+                                <span class="last-reply-username">最后回复来自
+                                    <a href="/u/{{ favorite.last_replied_username or favorite.last_replied_uid }}">
+                                        <strong>{{ favorite.last_replied_username }}</strong>
+                                    </a>
+                                </span>
+                            {% else %}
+                                <span class="last-touched">{{ favorite.last_touched|pretty_date }}</span>
+                            {% endif %}
                         </div>
                     </div>
                     {% if favorite.reply_count %}

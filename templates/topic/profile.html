@@ -161,14 +161,14 @@
                                     <a href="/u/{{ topic.author_username or topic.author_uid }}">{{ topic.author_username }}</a>
                                 </span> • 
                                 {% if topic.last_replied_time %}
-                                    <span class="last-reply-time">{{ topic.last_replied_time|pretty_date }}</span> • 
+                                    <span class="last-touched">{{ topic.last_touched|pretty_date }}</span> • 
                                     <span class="last-reply-username">最后回复来自
                                         <a href="/u/{{ topic.last_replied_username or topic.last_replied_uid }}">
                                             <strong>{{ topic.last_replied_username }}</strong>
                                         </a>
                                     </span>
                                 {% else %}
-                                    <span class="created-time">{{ topic.created|pretty_date }}</span>
+                                    <span class="last-touched">{{ topic.last_touched|pretty_date }}</span>
                                 {% endif %}
                             </div>
                         </div>

@@ -114,6 +114,13 @@ class SettingAvatarHandler(BaseHandler):
         avatar_raw = self.request.files["avatar"][0]["body"]
         avatar_buffer = StringIO.StringIO(avatar_raw)
         avatar = Image.open(avatar_buffer)
+
+        # crop avatar if it's not square
+        avatar_w, avatar_h = avatar.size
+        avatar_border = avatar_w if avatar_w < avatar_h else avatar_h
+        avatar_crop_region = (0, 0, avatar_border, avatar_border)
+        avatar = avatar.crop(avatar_crop_region)
+
         avatar_96x96 = avatar.resize((96, 96), Image.ANTIALIAS)
         avatar_48x48 = avatar.resize((48, 48), Image.ANTIALIAS)
         avatar_32x32 = avatar.resize((32, 32), Image.ANTIALIAS)
@@ -255,6 +262,8 @@ class LoginHandler(BaseHandler):
         
         if(user_info):
             do_login(self, user_info["uid"])
+            # update `last_login`
+            updated = self.user_model.set_user_base_info_by_uid(user_info["uid"], {"last_login": time.strftime('%Y-%m-%d %H:%M:%S')})
             self.redirect(self.get_argument("next", "/"))
             return
 

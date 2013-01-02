@@ -66,6 +66,7 @@ class Application(tornado.web.Application):
             (r"/vote", handler.topic.VoteHandler),
             (r"/favorite", handler.topic.FavoriteHandler),
             (r"/notifications", handler.notification.ListHandler),
+            (r"/members", handler.topic.MembersHandler),
             (r"/setting", handler.user.SettingHandler),
             (r"/setting/avatar", handler.user.SettingAvatarHandler),
             (r"/setting/avatar/gravatar", handler.user.SettingAvatarFromGravatarHandler),

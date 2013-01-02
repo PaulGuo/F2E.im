@@ -61,6 +61,23 @@
                     }
                 });
             });
+
+            $('.J_replyTo').click(function(e) {
+                username = $(this).attr('data-username');
+                replyContent = $('.J_replyContent');
+                oldContent = replyContent.val();
+                prefix = "@" + username + " ";
+                newContent = '';
+                if(oldContent.length > 0){
+                    if (oldContent != prefix) {
+                        newContent = oldContent + "\n" + prefix;
+                    }
+                } else {
+                    newContent = prefix;
+                }
+                replyContent.focus();
+                replyContent.val(newContent);
+            });
         });
     </script>
 {% endblock %}
@@ -113,7 +130,9 @@
             <span>共收到{{ replies.page.total }}条回复</span>
         </div>
         <div class="ui-content">
+            {% set floor = reply_num * (current_page - 1) %}
             {% for reply in replies.list %}
+            {% set floor = floor + 1 %}
                 <div class="reply-item">
                     <a href="/u/{{ reply.author_username }}">
                         <img src="/static/avatar/m_{{ reply.author_avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
@@ -127,6 +146,10 @@
                             {% if current_user and current_user.uid == reply.author_id %}
                                 <a href="/reply/edit/{{ reply.id }}">编辑回复</a>
                             {% endif %}
+                            <span class="floor fr">#{{ floor }}</span>
+                            <span class="reply-to fr J_replyTo" data-username="{{ reply.author_username }}">
+                                <img src="/static/images/reply.png" alt="" />
+                            </span>
                         </div>
                         <span class="content">{{ reply.content|markdown|content_process }}</span>
                     </div>
@@ -153,7 +176,7 @@
             <div class="ui-content">
                 <form class="mt10" action="" method="post">
                     {{ errors|dump_errors }}
-                    <textarea rows="3" class="content mt5 smart-code-support" placeholder="回复内容" name="content"></textarea>
+                    <textarea rows="3" class="content mt5 smart-code-support J_replyContent" placeholder="回复内容" name="content"></textarea>
                     <input name="tid" type="hidden" value="{{ topic.id }}" />
                     <input type="submit" id="checkall" class="btn btn-small" value="立即回复">
                     {{ xsrf_form_html() }}

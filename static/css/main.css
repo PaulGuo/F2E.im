@@ -426,7 +426,7 @@ a.btn-small {
 
 .row-fluid .left {
   width: 70.468%;
-  min-height: 550px; }
+  min-height: 750px; }
 .row-fluid .right {
   width: 27.404%; }
 
@@ -787,6 +787,13 @@ a.btn-small {
             margin: 0 0 0 5px; }
           .topic-reply .ui-content .reply-item .main .meta .reply-username {
             color: #333; }
+          .topic-reply .ui-content .reply-item .main .meta .reply-to {
+            margin: 0 5px 0 0;
+            cursor: pointer; }
+            .topic-reply .ui-content .reply-item .main .meta .reply-to img {
+              vertical-align: text-bottom; }
+          .topic-reply .ui-content .reply-item .main .meta .floor {
+            color: #999; }
         .topic-reply .ui-content .reply-item .main .content {
           font-size: 13px;
           font-weight: normal;
@@ -908,5 +915,28 @@ form .controls .avatar {
       background-image: linear-gradient(to bottom, #e9e9e9, #f8f8f8); }
     .replies-lists .ui-content .reply-item .content {
       padding: 10px; }
+      .replies-lists .ui-content .reply-item .content h1, .replies-lists .ui-content .reply-item .content h2, .replies-lists .ui-content .reply-item .content h3, .replies-lists .ui-content .reply-item .content h4, .replies-lists .ui-content .reply-item .content h5,
+      .replies-lists .ui-content .reply-item .content blockquote p {
+        font-size: 13px;
+        line-height: 20px; }
   .replies-lists .ui-footer {
     padding: 10px; }
+
+.member-lists .member {
+  display: inline-block;
+  width: 60px;
+  height: 50px;
+  padding: 10px;
+  text-align: center;
+  margin: 5px 0 0 5px; }
+  .member-lists .member .username {
+    display: block; }
+    .member-lists .member .username a {
+      font-family: Monaco, "Microsoft YaHei", "Hiragino Sans GB W3", Tahoma, Arial;
+      color: #666; }
+  .member-lists .member .avatar {
+    -webkit-border-radius: first-value-of(3px) first-value-of(3px);
+    -moz-border-radius: 3px / 3px;
+    border-radius: 3px / 3px;
+    width: 48px;
+    height: 48px; }

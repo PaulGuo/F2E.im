@@ -319,7 +319,7 @@ class Query(object):
         pages = pages + 1 if not count % list_rows == 0 else pages
         if(pages == 0): pages = 1
         if(current_page < 1): current_page = 1
-        if(current_page > pages): current_page = current_page
+        if(current_page > pages): current_page = pages
         start = (current_page - 1) * list_rows
         end = list_rows
         previous_page = current_page - 1 if current_page > 1 else 1

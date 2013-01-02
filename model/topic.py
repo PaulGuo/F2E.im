@@ -18,7 +18,7 @@ class TopicModel(Query):
         join = "LEFT JOIN user AS author_user ON topic.author_id = author_user.uid \
                 LEFT JOIN node ON topic.node_id = node.id \
                 LEFT JOIN user AS last_replied_user ON topic.last_replied_by = last_replied_user.uid"
-        order = "created DESC, last_replied_time DESC, id DESC"
+        order = "last_touched DESC, created DESC, last_replied_time DESC, id DESC"
         field = "topic.*, \
                 author_user.username as author_username, \
                 author_user.nickname as author_nickname, \
@@ -36,7 +36,7 @@ class TopicModel(Query):
         join = "LEFT JOIN user AS author_user ON topic.author_id = author_user.uid \
                 LEFT JOIN node ON topic.node_id = node.id \
                 LEFT JOIN user AS last_replied_user ON topic.last_replied_by = last_replied_user.uid"
-        order = "created DESC, last_replied_time DESC, id DESC"
+        order = "last_touched DESC, created DESC, last_replied_time DESC, id DESC"
         field = "topic.*, \
                 author_user.username as author_username, \
                 author_user.nickname as author_nickname, \
