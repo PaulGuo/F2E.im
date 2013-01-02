@@ -332,6 +332,9 @@ a.btn-small {
 }
 
 .footer {
+    position: absolute;
+    width:100%;
+    bottom: 0px;
     background: #fff;
     border-top: 1px solid #ddd;
     line-height: 13px;
