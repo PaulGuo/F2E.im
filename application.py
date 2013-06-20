@@ -15,7 +15,7 @@ sys.setdefaultencoding("utf8")
 import os.path
 import re
 import memcache
-import tornado.database
+import torndb
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
@@ -85,7 +85,7 @@ class Application(tornado.web.Application):
         tornado.web.Application.__init__(self, handlers, **settings)
 
         # Have one global connection to the blog DB across all handlers
-        self.db = tornado.database.Connection(
+        self.db = torndb.Connection(
             host = options.mysql_host, database = options.mysql_database,
             user = options.mysql_user, password = options.mysql_password
         )
