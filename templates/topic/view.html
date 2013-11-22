@@ -47,15 +47,29 @@
 
             $('.J_topicFavorite').click(function(e) {
                 var _node = $(this);
+                var _type = _node.attr('data-type');
+                var _href = _node.attr('href').replace(/\/[^\?]+/igm, '/' + _type);
                 var _errorMap = {
                     topic_not_exist: '主题不存在',
                     can_not_favorite_your_topic: '不能收藏自己的主题',
                     already_favorited: '之前已经收藏过了',
+                    user_not_login: '收藏失败',
+                    not_been_favorited: '之前还没有收藏过',
                 };
                 e.preventDefault();
+                _node.attr('href', _href);
                 $.getJSON(_node.attr('href'), function(data) {
                     if(data.success) {
-                        _node.html('<span class="f11 gray" style="text-shadow: 0px 1px 0px #fff;">收藏成功</span>');
+                        //_node.html('<span class="f11 gray" style="text-shadow: 0px 1px 0px #fff;">收藏成功</span>');
+                        if(_type === 'favorite') {
+                            _node.html('取消收藏');
+                            _node.attr('data-type', 'unfavorite');
+                        }
+
+                        if(_type === 'unfavorite') {
+                            _node.html('加入收藏');
+                            _node.attr('data-type', 'favorite');
+                        }
                     } else {
                         _node.html('<span>' + _errorMap[data.message] + '</span>');
                     }
@@ -77,6 +91,13 @@
                 }
                 replyContent.focus();
                 replyContent.val(newContent);
+            });
+
+            $('.J_replyContent').keydown(function(e) {
+                if((e.ctrlKey || e.metaKey) && e.which === 13) {
+                    e.preventDefault();
+                    $(e.currentTarget).parent('form').submit();
+                }
             });
         });
     </script>
@@ -113,7 +134,11 @@
             {{ topic.content|markdown|content_process }}
         </div>
         <div class="ui-footer">
-            <a href="/favorite?topic_id={{ topic.id }}" class="J_topicFavorite">加入收藏</a>
+            {% if not topic_favorited %}
+            <a href="/favorite?topic_id={{ topic.id }}" class="J_topicFavorite" data-type="favorite">加入收藏</a>
+            {% else %}
+            <a href="/unfavorite?topic_id={{ topic.id }}" class="J_topicFavorite" data-type="unfavorite">取消收藏</a>
+            {% endif %}
             <a href="#" onclick="window.open('https://twitter.com/intent/tweet?hashtags={{ topic.node_slug }}&text={{ topic.title }}&url=http://{{ request.host }}{{ request.uri }}');">Tweet</a>
             <a href="#" onclick="window.open('http://service.weibo.com/share/share.php?url=http://{{ request.host }}{{ request.uri }}&title=F2E%20-%20{{ topic.title }}', '_blank', 'width=550, height=370');">新浪微博</a>
             <a href="/vote?topic_id={{ topic.id }}" class="J_topicVote">喜欢</a>
@@ -157,13 +182,15 @@
             {% endfor %}
         </div>
         <div class="ui-footer">
+            {% if replies.page.pages > 1 %}
             <div class="pagination pagination-mini">
                 {{ replies.page|pagination(request.uri) }}
             </div>
+            {% endif %}
         </div>
     </div>
     {% else %}
-    <div class="alert mt20">
+    <div class="alert mt20 no-replies">
         暂无回复，说出你的观点吧
     </div>
     {% endif %}
@@ -187,8 +214,8 @@
                 <span class="title">登录后即可参与回复</span>
             </div>
             <div class="ui-content">
-                <a class="btn btn-small" type="button" href="/login">登录</a>
-                <a class="btn btn-small" type="button" href="/register">注册</a>
+                <a class="btn btn-small mt5 mr10" type="button" href="/login">登录</a>
+                <a class="btn btn-small mt5" type="button" href="/register">注册</a>
             </div>
         {% endif %}
     </div>
@@ -222,8 +249,8 @@
     {% else %}
         <div class="login-box container-box">
             <div class="ui-content tc">
-                <a class="btn btn-small" type="button" href="/login">登录</a>
-                <a class="btn btn-small" type="button" href="/register">注册</a>
+                <a class="btn btn-small mr10" type="button" href="/login">登录</a>
+                <a class="btn btn-small mr10" type="button" href="/register">注册</a>
                 <a class="btn btn-small" type="button" href="/forgot">找回密码</a>
             </div>
         </div>

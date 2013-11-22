@@ -27,6 +27,7 @@ class Filters():
         self.jinja2.filters["pretty_date"] = self.pretty_date
         self.jinja2.filters["content_process"] = self.content_process
         self.jinja2.filters["markdown"] = self.markdown
+        self.jinja2.filters["email_mosaic"] = self.email_mosaic
         return self.jinja2
 
     def dump_errors(self, errors):
@@ -143,3 +144,17 @@ class Filters():
         if not content:
             return ""
         return markdown(content, extensions = ['codehilite', 'fenced_code', 'mathjax'], safe_mode = 'escape')
+
+    def email_mosaic(self, email):
+        if not email:
+            return ""
+
+        email_name = re.findall(r'^([^@]+)@', email)[0]
+
+        if len(email_name) < 5:
+            email_name = email_name + '***'
+            email = re.sub(r'^([^@]+)@', '%s@' % email_name, email)
+        else:
+            email = re.sub(r'[^@]{3}@', '***@', email)
+
+        return email

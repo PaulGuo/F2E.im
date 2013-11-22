@@ -51,6 +51,11 @@ class ReplyModel(Query):
         where = "author_id = %s AND topic_id = %s" % (uid, topic_id)
         return self.where(where).find()
 
+    def get_user_last_reply_by_topic_id(self, uid, topic_id):
+        where = "author_id = %s AND topic_id = %s" % (uid, topic_id)
+        order = "created DESC"
+        return self.where(where).order(order).find()
+
     def get_reply_by_reply_id(self, reply_id):
         where = "id = %s" % reply_id
         return self.where(where).find()

@@ -44,3 +44,7 @@ class FavoriteModel(Query):
                 last_replied_user.nickname as last_replied_nickname"
         return self.where(where).order(order).join(join).field(field).pages(current_page = current_page, list_rows = num)
 
+    def cancel_exist_favorite_by_id(self, favorite_id):
+        where = "id = %s" %  favorite_id
+        return self.where(where).delete()
+

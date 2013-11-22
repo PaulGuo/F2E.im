@@ -87,7 +87,7 @@
                 {% endif %}
                 <dl>
                     <dt>Email</dt>
-                    <dd>{{ user_info.email }}</dd>
+                    <dd>{{ user_info.email|email_mosaic }}</dd>
                 </dl>
                 {% if user_info.twitter %}
                 <dl>

@@ -26,7 +26,7 @@
 
             {% if replies.page.total == 0 %}
                 <div class="pl10 pr10">
-                    <div class="alert mt20">
+                    <div class="alert mt20 no-replies">
                         该用户暂时还没有回复过主题。
                     </div>
                 </div>
@@ -34,9 +34,11 @@
         </div>
 
         <div class="ui-footer">
+            {% if replies.page.pages > 1 %}
             <div class="pagination">
                 {{ replies.page|pagination(request.uri) }}
             </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

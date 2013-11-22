@@ -43,7 +43,7 @@
 
             {% if topics.page.total == 0 %}
                 <div class="pl10 pr10">
-                    <div class="alert mt20">
+                    <div class="alert mt20 no-topics">
                         该用户暂时还没有发表过主题。
                     </div>
                 </div>
@@ -51,9 +51,11 @@
         </div>
 
         <div class="ui-footer">
+        {% if topics.page.pages > 1 %}
             <div class="pagination">
                 {{ topics.page|pagination(request.uri) }}
             </div>
+        {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -2,12 +2,16 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta name="format-detection" content="telephone=no" />
     <title>{% block title %}F2E - 前端技术社区{% endblock %}</title>
     <script type="text/javascript" src="/static/js/base/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="/static/js/base/bootstrap.min.js"></script>
     <script type="text/javascript" src="/static/js/base/in-min.js"></script>
     <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="/static/css/main.css" />
+    <link rel="stylesheet" href="/static/css/main.css?t=20130807001.css" />
     {% block stylesheet %}{% endblock %}
     {% block javascript %}{% endblock %}
     <script type="text/javascript">
@@ -20,7 +24,9 @@
             });
         });
     </script>
+    {#
     <script type="text/javascript" src="/static/js/widget/jquery.scrolltotop-min.js"></script>
+    #}
     <style type="text/css">
         .totop a {
             display: block;
@@ -35,6 +41,7 @@
             background-position: 0 -35px;
         }
     </style>
+    {#
     <script type="text/javascript">
         jQuery(document).ready(function() {
             $.scrolltotop({
@@ -44,6 +51,7 @@
             });
         });
     </script>
+    #}
 </head>
 <body>
     
@@ -56,6 +64,19 @@
                 <span class="icon-bar"></span>
             </a>
             <a class="brand" href="/">F2E</a>
+            <div class="divider-vertical"></div>
+            {% if current_user %}
+                {% if notifications_count %}
+                    <a href="/notifications" class="notification-indicator tooltipped downwards contextually-unread" title="{{ current_user.nickname or current_user.username }}，你有{{ notifications_count }}条未读提醒，去看看吧">
+                        <span class="mail-status unread"></span>
+                    </a>
+                {% else %}
+                    <a href="/notifications" class="notification-indicator tooltipped downwards" title="暂时没有未读提醒">
+                        <span class="mail-status"></span>
+                    </a>
+                {% endif %}
+                <div class="divider-vertical"></div>
+            {% endif %}
             <div class="nav-collapse collapse">
             
                 {% set navigation_bar = [
@@ -69,6 +90,8 @@
                 {% set navigation_bar = [
                     ('/', 'topic', '社区'),
                     ('/members', 'members', '成员'),
+                    ('/static/pages/timeline/index.html', 'timeline', '大事记'),
+                    ('/static/pages/nav/index.html', 'nav', '导航'),
                 ] -%}
 
                 {% set active_page = active_page|default('index') -%}
@@ -83,16 +106,34 @@
             </div>
             <!--/.nav-collapse -->
             <form class="navbar-search pull-left J_search">
-                <input type="text" class="search-query" placeholder="Search" x-webkit-speech>
+                <input type="text" class="search-query" placeholder="{#Search#}" x-webkit-speech>
             </form>
             <div class="nav-collapse collapse pull-right">
-                <ul class="nav">
+                <ul class="nav account-menu">
                     {% if current_user %}
-                        <li><a href="/setting">{{ current_user.username }}</a></li>
-                        <li><a href="/logout">退出</a></li>
+                        <li>
+                            <a href="/u/{{ current_user.username or current_user.uid }}" class="avatar">
+                                <img src="/static/avatar/s_{{ current_user.avatar or 'default.png' }}?t={{ gen_random() }}" width="20" height="20">
+                            </a>
+                        </li>
+                        <li><a href="/u/{{ current_user.username or current_user.uid }}">{{ current_user.username }}</a></li>
+                        <li>
+                            <a href="/setting">
+                                <span class="octicon octicon-tools"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/logout">
+                                <span class="octicon octicon-log-out"></span>
+                            </a>
+                        </li>
                     {% else %}
-                        <li><a href="/login">登录</a></li>
-                        <li><a href="/register">注册</a></li>
+                        <li>
+                            <a href="/login">
+                                <span class="octicon octicon-log-in"></span>
+                            </a>
+                        </li>
+                        <li><a href="/register" class="btn btn-small">注册</a></li>
                     {% endif %}
                 </ul>
             </div>

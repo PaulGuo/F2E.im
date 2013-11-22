@@ -47,13 +47,18 @@
             </div>
         {% endfor %}
 
+        {% if topics.page.pages > 1 %}
         <div class="pagination">
             {{ topics.page|pagination(request.uri) }}
         </div>
+        {% endif %}
     </div>
 
     <div class="nodes-cloud container-box mt10">
-        <h4 class="title">F2E / 常见节点导航</h4>
+        <h4 class="title">
+            <span class="octicon octicon-globe"></span>
+            常见节点导航
+        </h4>
         <ul>
             {% for plane in planes %}
                 <li>
@@ -94,6 +99,7 @@
                 </div>
             </div>
         </div>
+        {#
         {% if user_info.counter.notifications %}
             <div class="alert mt10 mb10">
                 <span>
@@ -101,17 +107,18 @@
                 </span>
             </div>
         {% endif %}
+        #}
     {% else %}
         <div class="login-box container-box">
             <div class="ui-content tc">
-                <a class="btn btn-small" type="button" href="/login">登录</a>
-                <a class="btn btn-small" type="button" href="/register">注册</a>
+                <a class="btn btn-small mr10" type="button" href="/login">登录</a>
+                <a class="btn btn-small mr10" type="button" href="/register">注册</a>
                 <a class="btn btn-small" type="button" href="/forgot">找回密码</a>
             </div>
         </div>
     {% endif %}
 
-    <div class="sidebox container-box mt10">
+    <div class="sidebox container-box mt10 weixin">
         <div class="ui-header">
             <span class="title">微信公共帐号</span>
         </div>
@@ -138,9 +145,12 @@
         <div class="ui-content">
             <p><a href="http://python-china.org"><img src="/static/images/python_china_logo.jpg" alt="" /></a></p>
             <p><a href="http://ruby-china.org"><img src="/static/images/ruby_china_logo.png" alt="" /></a></p>
+            <p><a href="http://trans4fun.org"><img src="/static/images/trans4fun.png" alt="" /></a></p>
+            <p><a href="http://www.ubuntusoft.com"><img src="/static/images/ubuntusoft.png" alt="" style="width:190px;" /></a></p>
         </div>
     </div>
 
+    {#
     <div class="sidebox container-box mt10 friends">
         <div class="ui-header">
             <span class="title">我们的标志</span>
@@ -149,6 +159,7 @@
             <p><a href="http://f2e.im"><img src="/static/images/f2e.im.logo.png" alt="" /></a></p>
         </div>
     </div>
+    #}
 
     <div class="sidebox container-box mt10 community-status">
         <div class="ui-header">
@@ -160,7 +171,7 @@
                 <dd>{{ status_counter.users }}</dd>
             </dl>
             <dl>
-                <dt>结点</dt>
+                <dt>节点</dt>
                 <dd>{{ status_counter.nodes }}</dd>
             </dl>
             <dl>

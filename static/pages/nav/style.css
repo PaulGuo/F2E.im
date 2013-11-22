@@ -1,0 +1,183 @@
+h2{
+    font-size:18px;
+}
+
+h3{
+    font-size:16px;
+}
+
+.tooltip{
+    font-family: 'Hiragino Sans GB', Helvetica, Arial, sans-serif;
+    font-size: 12px;
+}
+
+.navbar-inner {
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px 
+}
+
+.navbar{
+    margin-bottom:0;
+}
+
+.ribbon{
+    position:absolute;
+    top:-1px;
+    right:0px;
+}
+
+.container{
+   width:auto;
+}
+
+.footer{
+    text-align: center;
+    padding: 20px 0;
+    background-color: whiteSmoke;
+}
+
+.tag{
+    overflow:hidden;
+}
+
+.tag td {
+    padding: 0;
+}
+
+table{
+    width:100%;
+}
+
+.header {
+   border-right: 1px solid #E1E1E8; 
+   border-bottom: 1px solid #E1E1E8; 
+   width:208px;
+   background-color: #F7F7F9;
+}
+
+.content {
+   border-bottom: 1px solid #E1E1E8; 
+}
+
+.header h2{
+   padding:10px;
+   text-align:center;
+}
+
+.tag ul{
+    margin:0;
+}
+
+.tag li{
+    width:180px;
+    float:left;
+    list-style:none;
+    border-right: 1px solid #E5E5E5;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: -1px;
+}
+
+.tag li a{
+    display:block;
+    padding:5px;
+    height:92px;
+    font-family: 'Hiragino Sans GB', Helvetica, Arial, sans-serif;
+}
+
+.tag li a p{
+    margin:0;
+    font-size: 10px;
+}
+
+.tag li a:hover{
+    color:#FFF;
+    background-color: #08C;
+    text-decoration:none;
+}
+
+.tag li h3 {
+    line-height: 20px;
+    margin-bottom: 7px;
+    font-size: 14px;
+}
+
+.footer .container p {
+    margin: 0;
+}
+
+
+@media screen and (min-width:1440px) {
+    
+}
+
+@media screen and (max-width:1200px) {
+
+}
+
+@media screen and (min-width:951px) and (max-width:1200px) {
+}
+
+@media screen and (max-width:950px) {
+}
+
+@media screen and (min-width:801px) and (max-width:950px) {
+}
+
+@media screen and (min-width:800px) {
+}
+
+@media screen and (max-width:640px) {
+}
+
+@media screen and (max-width:320px) {
+    .ribbon{
+        display:none;
+    } 
+
+    .navbar .brand{
+        text-align:center;
+        display:block;
+        width:100%;
+        padding: 3px 0;
+        margin-left: 0px;
+        float:none;
+        color:#FFF;
+    }
+
+    .nav-collapse.collapse{
+        overflow:visible;
+    } 
+
+    .navbar .nav{
+        margin:0 auto;
+        float:none;
+    }
+
+    .header{
+        background-color: #F7F7F9;
+        border: 1px solid #E1E1E8;
+    }
+
+    .header h2{
+        border: none;
+        width: 46px;
+        font-size: 20px;
+    }
+    
+    .tag p{
+        display:none;
+    }
+
+    .tag li  {
+        width:auto;
+    }
+
+    .tag li a {
+        height:24px;
+    }
+
+    .container{
+        width:auto;
+    }
+}

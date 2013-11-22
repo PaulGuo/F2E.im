@@ -33,9 +33,10 @@ class ListHandler(BaseHandler):
         template_variables["user_info"]["counter"] = {
             "topics": self.topic_model.get_user_all_topics_count(user_info["uid"]),
             "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
-            "notifications": self.notification_model.get_user_unread_notification_count(user_info["uid"]),
             "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
         }
+
+        template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(user_info["uid"]);
         template_variables["notifications"] = self.notification_model.get_user_all_notifications(user_info["uid"], current_page = page)
         template_variables["active_page"] = "topic"
         template_variables["gen_random"] = gen_random

@@ -35,9 +35,10 @@ class IndexHandler(BaseHandler):
             template_variables["user_info"]["counter"] = {
                 "topics": self.topic_model.get_user_all_topics_count(user_info["uid"]),
                 "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
-                "notifications": self.notification_model.get_user_unread_notification_count(user_info["uid"]),
                 "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
             }
+
+            template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(user_info["uid"]);
 
         template_variables["status_counter"] = {
             "users": self.user_model.get_all_users_count(),
@@ -63,6 +64,9 @@ class NodeTopicsHandler(BaseHandler):
                 "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
                 "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
             }
+
+            template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(user_info["uid"]);
+
         template_variables["topics"] = self.topic_model.get_all_topics_by_node_slug(current_page = page, node_slug = node_slug)
         template_variables["node"] = self.node_model.get_node_by_node_slug(node_slug)
         template_variables["active_page"] = "topic"
@@ -81,18 +85,22 @@ class ViewHandler(BaseHandler):
                 "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
                 "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
             }
+
+            template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(user_info["uid"]);
+            template_variables["topic_favorited"] = self.favorite_model.get_favorite_by_topic_id_and_owner_user_id(topic_id, user_info["uid"]);
+
         template_variables["gen_random"] = gen_random
         template_variables["topic"] = self.topic_model.get_topic_by_topic_id(topic_id)
 
         # check reply count and cal current_page if `p` not given
-        reply_num = 16
+        reply_num = 106
         reply_count = template_variables["topic"]["reply_count"]
         reply_last_page = (reply_count / reply_num + (reply_count % reply_num and 1)) or 1
         page = int(self.get_argument("p", reply_last_page))
         template_variables["reply_num"] = reply_num
         template_variables["current_page"] = page
 
-        template_variables["replies"] = self.reply_model.get_all_replies_by_topic_id(topic_id, current_page = page)
+        template_variables["replies"] = self.reply_model.get_all_replies_by_topic_id(topic_id, current_page = page, num = reply_num)
         template_variables["active_page"] = "topic"
 
         # update topic reply_count and hits
@@ -119,13 +127,23 @@ class ViewHandler(BaseHandler):
         # continue while validate succeed
 
         topic_info = self.topic_model.get_topic_by_topic_id(form.tid.data)
-        replied_info = self.reply_model.get_user_reply_by_topic_id(self.current_user["uid"], form.tid.data)
+        replied_info = self.reply_model.get_user_last_reply_by_topic_id(self.current_user["uid"], form.tid.data)
 
         if(not topic_info):
             template_variables["errors"] = {}
             template_variables["errors"]["invalid_topic_info"] = [u"要回复的帖子不存在"]
-            self.get(template_variables)
+            self.get(form.tid.data, template_variables)
             return
+
+        if(replied_info):
+            last_replied_fingerprint = hashlib.sha1(str(replied_info.topic_id) + str(replied_info.author_id) + replied_info.content).hexdigest()
+            new_replied_fingerprint = hashlib.sha1(str(form.tid.data) + str(self.current_user["uid"]) + form.content.data).hexdigest()
+
+            if last_replied_fingerprint == new_replied_fingerprint:
+                template_variables["errors"] = {}
+                template_variables["errors"]["duplicated_reply"] = [u"回复重复提交"]
+                self.get(form.tid.data, template_variables)
+                return
         
         reply_info = {
             "author_id": self.current_user["uid"],
@@ -202,6 +220,8 @@ class CreateHandler(BaseHandler):
             "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
             "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
         }
+
+        template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(user_info["uid"]);
         template_variables["gen_random"] = gen_random
         template_variables["node_slug"] = node_slug
         template_variables["active_page"] = "topic"
@@ -222,6 +242,17 @@ class CreateHandler(BaseHandler):
         # continue while validate succeed
 
         node = self.node_model.get_node_by_node_slug(node_slug)
+        last_created = self.topic_model.get_user_last_created_topic(self.current_user["uid"])
+
+        if last_created:
+            last_created_fingerprint = hashlib.sha1(last_created.title + last_created.content + str(last_created.node_id)).hexdigest()
+            new_created_fingerprint = hashlib.sha1(form.title.data + form.content.data + str(node["id"])).hexdigest()
+
+            if last_created_fingerprint == new_created_fingerprint:
+                template_variables["errors"] = {}
+                template_variables["errors"]["duplicated_topic"] = [u"帖子重复提交"]
+                self.get(node_slug, template_variables)
+                return
         
         topic_info = {
             "author_id": self.current_user["uid"],
@@ -253,6 +284,8 @@ class EditHandler(BaseHandler):
             "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
             "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
         }
+
+        template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(user_info["uid"]);
         template_variables["topic"] = self.topic_model.get_topic_by_topic_id(topic_id)
         template_variables["gen_random"] = gen_random
         template_variables["active_page"] = "topic"
@@ -304,6 +337,11 @@ class ProfileHandler(BaseHandler):
         else:
             user_info = self.user_model.get_user_by_username(user)
 
+        if not user_info:
+            self.write_error(404)
+            return
+
+        current_user = self.current_user
         page = int(self.get_argument("p", "1"))
         template_variables["user_info"] = user_info
         if(user_info):
@@ -312,6 +350,9 @@ class ProfileHandler(BaseHandler):
                 "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
                 "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
             }
+
+        if(current_user):
+            template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(current_user["uid"]);
 
         '''
         if user_info["github"]:
@@ -379,6 +420,7 @@ class UserTopicsHandler(BaseHandler):
         else:
             user_info = self.user_model.get_user_by_username(user)
 
+        current_user = self.current_user
         page = int(self.get_argument("p", "1"))
         template_variables["user_info"] = user_info
         if(user_info):
@@ -387,6 +429,10 @@ class UserTopicsHandler(BaseHandler):
                 "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
                 "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
             }
+
+        if(current_user):
+            template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(current_user["uid"]);
+
         template_variables["topics"] = self.topic_model.get_user_all_topics(user_info["uid"], current_page = page)
         template_variables["active_page"] = "topic"
         template_variables["gen_random"] = gen_random
@@ -399,6 +445,7 @@ class UserRepliesHandler(BaseHandler):
         else:
             user_info = self.user_model.get_user_by_username(user)
 
+        current_user = self.current_user
         page = int(self.get_argument("p", "1"))
         template_variables["user_info"] = user_info
         if(user_info):
@@ -407,6 +454,10 @@ class UserRepliesHandler(BaseHandler):
                 "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
                 "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
             }
+
+        if(current_user):
+            template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(current_user["uid"]);
+
         template_variables["replies"] = self.reply_model.get_user_all_replies(user_info["uid"], current_page = page)
         template_variables["active_page"] = "topic"
         template_variables["gen_random"] = gen_random
@@ -419,6 +470,7 @@ class UserFavoritesHandler(BaseHandler):
         else:
             user_info = self.user_model.get_user_by_username(user)
 
+        current_user = self.current_user
         page = int(self.get_argument("p", "1"))
         template_variables["user_info"] = user_info
         if(user_info):
@@ -427,6 +479,10 @@ class UserFavoritesHandler(BaseHandler):
                 "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
                 "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
             }
+
+        if(current_user):
+            template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(current_user["uid"]);
+
         template_variables["favorites"] = self.favorite_model.get_user_all_favorites(user_info["uid"], current_page = page)
         template_variables["active_page"] = "topic"
         template_variables["gen_random"] = gen_random
@@ -442,6 +498,8 @@ class ReplyEditHandler(BaseHandler):
             "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
             "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
         }
+
+        template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(user_info["uid"]);
         template_variables["reply"] = self.reply_model.get_reply_by_reply_id(reply_id)
         template_variables["gen_random"] = gen_random
         template_variables["active_page"] = "topic"
@@ -489,6 +547,13 @@ class FavoriteHandler(BaseHandler):
         topic_id = int(self.get_argument("topic_id"))
         topic_info = self.topic_model.get_topic_by_topic_id(topic_id)
 
+        if not self.current_user:
+            self.write(lib.jsonp.print_JSON({
+                "success": 0,
+                "message": "user_not_login",
+            }))
+            return
+
         if not topic_info:
             self.write(lib.jsonp.print_JSON({
                 "success": 0,
@@ -528,15 +593,61 @@ class FavoriteHandler(BaseHandler):
         reputation = reputation + 2 * math.log(self.current_user["reputation"] or 0 + topic_time_diff.days + 10, 10)
         self.user_model.set_user_base_info_by_uid(topic_info["author_id"], {"reputation": reputation})
 
+class CancelFavoriteHandler(BaseHandler):
+    def get(self, template_variables = {}):
+        topic_id = int(self.get_argument("topic_id"))
+        topic_info = self.topic_model.get_topic_by_topic_id(topic_id)
+        favorite_info = None
+
+        if not self.current_user:
+            self.write(lib.jsonp.print_JSON({
+                "success": 0,
+                "message": "user_not_login",
+            }))
+            return
+
+        if not topic_info:
+            self.write(lib.jsonp.print_JSON({
+                "success": 0,
+                "message": "topic_not_exist",
+            }))
+            return
+
+        favorite_info = self.favorite_model.get_favorite_by_topic_id_and_owner_user_id(topic_id, self.current_user["uid"])
+
+        if not favorite_info:
+            self.write(lib.jsonp.print_JSON({
+                "success": 0,
+                "message": "not_been_favorited",
+            }))
+            return
+
+        self.favorite_model.cancel_exist_favorite_by_id(favorite_info["id"])
+
+        self.write(lib.jsonp.print_JSON({
+            "success": 1,
+            "message": "cancel_favorite_success",
+        }))
+
+        # update reputation of topic author
+        topic_time_diff = datetime.datetime.now() - topic_info["created"]
+        reputation = topic_info["author_reputation"] or 0
+        reputation = reputation + 2 * math.log(self.current_user["reputation"] or 0 + topic_time_diff.days + 10, 10)
+        self.user_model.set_user_base_info_by_uid(topic_info["author_id"], {"reputation": reputation})
+
 class MembersHandler(BaseHandler):
     def get(self, template_variables = {}):
         user_info = self.current_user
         template_variables["user_info"] = user_info
-        template_variables["user_info"]["counter"] = {
-            "topics": self.topic_model.get_user_all_topics_count(user_info["uid"]),
-            "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
-            "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
-        }
+        if(user_info):
+            template_variables["user_info"]["counter"] = {
+                "topics": self.topic_model.get_user_all_topics_count(user_info["uid"]),
+                "replies": self.reply_model.get_user_all_replies_count(user_info["uid"]),
+                "favorites": self.favorite_model.get_user_favorite_count(user_info["uid"]),
+            }
+
+            template_variables["notifications_count"] = self.notification_model.get_user_unread_notification_count(user_info["uid"]);
+
         template_variables["members"] = self.user_model.get_users_by_latest(num = 49)
         template_variables["active_members"] = self.user_model.get_users_by_last_login(num = 49)
         template_variables["gen_random"] = gen_random

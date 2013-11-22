@@ -26,6 +26,7 @@ class CreateForm(Form):
 
     content = TextField('Content', [
         validators.Required(message = "请填写帖子内容"),
+        validators.Length(min = 15, message = "帖子内容长度过短（少于15个字符）"),
     ])
 
 class ReplyEditForm(Form):
