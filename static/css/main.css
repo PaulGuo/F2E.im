@@ -947,7 +947,7 @@ a.btn-small {
   font-size: 12px; }
 
 a.btn {
-  color: #666!important; }
+  color: #666666 !important; }
 
 .navbar-static-top .container,
 .navbar-fixed-top .container,
@@ -967,7 +967,7 @@ a.btn {
     background-image: -webkit-linear-gradient(#f9f9f9, #f3f3f3);
     background-image: linear-gradient(#f9f9f9, #f3f3f3);
     background-repeat: repeat-x;
-    text-shadow: 0 1px 0 white;
+    text-shadow: 0 1px 0 #fff;
     border-bottom: 1px solid #e5e5e5;
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
@@ -978,7 +978,7 @@ a.btn {
       -webkit-transition: all 0.1s ease-in 0;
       white-space: nowrap;
       font-weight: bold;
-      text-shadow: 0 1px 0 white;
+      text-shadow: 0 1px 0 #fff;
       margin: 0 -15px 0 -10px;
       padding: 7px 20px; }
     .top-navbar .navbar-inner .nav {
@@ -1000,7 +1000,7 @@ a.btn {
           color: #333333;
           transition: all 0.1s ease-in;
           -webkit-transition: all 0.1s ease-in 0;
-          text-shadow: 0 1px 0 white; }
+          text-shadow: 0 1px 0 #fff; }
           .top-navbar .navbar-inner .nav li a:hover {
             color: #db4937; }
         .top-navbar .navbar-inner .nav li .avatar img {
@@ -1013,7 +1013,7 @@ a.btn {
       height: 40px;
       margin: 0 15px;
       background-color: #e5e5e5;
-      border-right: 1px solid white;
+      border-right: 1px solid #fff;
       border-left: 0; }
     .top-navbar .navbar-inner .account-menu .btn-small {
       margin: 2px 0 0 10px;
@@ -1034,7 +1034,7 @@ a.btn {
       min-height: 28px;
       min-height: 20px\9;
       padding: 4px 8px 4px 8px;
-      padding: 1px 8px 1px 8px \9;
+      padding: 1px 8px 1px 8px\9;
       font-size: 12px;
       transition: all 0.2s ease-in-out;
       -webkit-transition: all 0.2s ease-in-out 0;
@@ -1043,9 +1043,9 @@ a.btn {
       background-color: #fcfcfc;
       background-repeat: no-repeat;
       background-position: right center;
-      border: 1px solid #dddddd;
+      border: 1px solid #ddd;
       border-radius: 3px;
-      box-shadow: 1px 1px 0 white;
+      box-shadow: 1px 1px 0 #fff;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
       transition: all 0.15s ease-in;
@@ -1054,7 +1054,7 @@ a.btn {
       margin: 2px 0 0;
       line-height: 1.4; }
       .top-navbar .navbar-search input.search-query:focus {
-        padding: 1px 15px 1px 15px \9; }
+        padding: 1px 15px 1px 15px\9; }
 
 .container-box {
   -webkit-border-radius: first-value-of(5px) first-value-of(5px);
@@ -1069,7 +1069,7 @@ a.btn {
   border: 1px solid rgba(150, 150, 150, 0.6); }
   .container-box .ui-header .title {
     display: block;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #eee;
     padding: 0 0 8px;
     margin: 0 0 -1px 0; }
   .container-box a {
@@ -1127,7 +1127,7 @@ a.btn {
       color: #777;
       margin: 0 0 3px 0;
       letter-spacing: 0;
-      text-shadow: 0 1px 0 white; }
+      text-shadow: 0 1px 0 #fff; }
       .topics .topic-item .title a {
         color: #555; }
     .topics .topic-item .meta {
@@ -1214,7 +1214,7 @@ a.btn {
     padding: 5px 0;
     margin: 10px 0;
     text-align: center;
-    border-right: 1px solid #eeeeee;
+    border-right: 1px solid #eee;
     line-height: 18px; }
     .usercard .ui-content .status strong, .user-page .profile .ui-content .status strong {
       display: block;
@@ -1234,16 +1234,16 @@ a.btn {
     color: #333;
     margin: 0;
     padding: 10px;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #eee;
     font-weight: bold;
     padding-left: 30px;
-    text-shadow: 0 1px 0 white; }
+    text-shadow: 0 1px 0 #fff; }
   .nodes-cloud ul {
     margin: 0;
-    text-shadow: 0 1px 0 white; }
+    text-shadow: 0 1px 0 #fff; }
     .nodes-cloud ul li {
       list-style: none;
-      border-bottom: 1px solid #eeeeee;
+      border-bottom: 1px solid #eee;
       padding: 7px 10px 7px 0;
       line-height: 24px; }
       .nodes-cloud ul li:last-child {
@@ -1265,7 +1265,7 @@ a.btn {
 
 .footer {
   background: #fff;
-  border-top: 1px solid #cccccc;
+  border-top: 1px solid #ccc;
   line-height: 20px;
   padding: 8px 0 12px; }
   .footer .footer-bg {
@@ -1285,12 +1285,12 @@ a.btn {
   margin: 3px 0;
   background: #f3f3f3;
   color: #999;
-  border: 1px solid #eeeeee;
+  border: 1px solid #eee;
   font-size: 12px;
   background: -moz-linear-gradient(center top, white 0%, #f3f3f3 50%, #ededed 51%, white 100%) repeat scroll 0 0 transparent;
   background: -webkit-linear-gradient(top, white 0%, #f3f3f3 50%, #ededed 51%, white 100%) repeat scroll 0 0 transparent;
   border: 1px solid #e5e5e5;
-  text-shadow: 0 1px 0 white; }
+  text-shadow: 0 1px 0 #fff; }
 
 .community-status dl {
   margin: 5px 0 5px 0; }
@@ -1312,7 +1312,7 @@ a.btn {
   right: 20px;
   top: 15px;
   color: #999;
-  text-shadow: 0 1px 0 black; }
+  text-shadow: 0 1px 0 #000; }
 .user-page .profile dl {
   margin: 5px 0 5px 0; }
   .user-page .profile dl dt {
@@ -1356,7 +1356,7 @@ a.btn {
     -webkit-border-radius: first-value-of(5px) first-value-of(5px 5px 0 0);
     -moz-border-radius: 5px / 5px 5px 0 0;
     border-radius: 5px / 5px 5px 0 0;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #eee;
     padding: 10px;
     background: #f5f5f5;
     background-image: -webkit-gradient(linear, left top, left bottom, from(white), to(whitesmoke));
@@ -1392,17 +1392,19 @@ a.btn {
       line-height: 22px; }
       .topic-detail .ui-content ul > li p,
       .topic-detail .ui-content ol > li p {
-        margin: 0!important; }
+        margin: 0 !important; }
+    .topic-detail .ui-content iframe {
+      max-height: 195px; }
   .topic-detail .ui-footer {
     -webkit-border-radius: first-value-of(5px) first-value-of(0 0 5px 5px);
     -moz-border-radius: 5px / 0 0 5px 5px;
     border-radius: 5px / 0 0 5px 5px;
     background: #f5f5f5;
     padding: 5px 10px;
-    border-top: 1px solid #eeeeee;
+    border-top: 1px solid #eee;
     color: #666;
     font-size: 12px;
-    text-shadow: 0px 1px 0px white;
+    text-shadow: 0px 1px 0px #fff;
     background: #eeeeee;
     background: -moz-linear-gradient(top, #eeeeee 0%, #cccccc 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #cccccc));
@@ -1415,7 +1417,7 @@ a.btn {
       margin: 0 15px 0 0;
       color: #333;
       font-size: 12px;
-      text-shadow: 0px 1px 0px white; }
+      text-shadow: 0px 1px 0px #fff; }
 
 .topic-reply {
   padding: 0; }
@@ -1425,7 +1427,7 @@ a.btn {
     border-radius: 5px / 5px 5px 0 0;
     padding: 5px 10px;
     background: #f5f5f5;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #eee;
     background-image: -webkit-gradient(linear, left top, left bottom, from(white), to(whitesmoke));
     background-image: -webkit-linear-gradient(top, white, whitesmoke);
     background-image: -moz-linear-gradient(top, white, whitesmoke);
@@ -1434,7 +1436,7 @@ a.btn {
   .topic-reply .ui-content {
     padding: 0 10px; }
     .topic-reply .ui-content .reply-item {
-      border-bottom: 1px solid #eeeeee;
+      border-bottom: 1px solid #eee;
       padding: 10px 0; }
       .topic-reply .ui-content .reply-item:last-child {
         border-bottom: 0; }
@@ -1473,6 +1475,8 @@ a.btn {
           .topic-reply .ui-content .reply-item .main .content blockquote p {
             font-size: 13px;
             line-height: 20px; }
+          .topic-reply .ui-content .reply-item .main .content iframe {
+            max-height: 135px; }
     .topic-reply .ui-content .gist .gist-file {
       -webkit-border-radius: first-value-of(3px) first-value-of(3px);
       -moz-border-radius: 3px / 3px;
@@ -1533,7 +1537,7 @@ form .controls p {
   padding: 7px 0 0; }
 
 .node-topics .ui-header {
-  border-bottom: 1px solid #eeeeee; }
+  border-bottom: 1px solid #eee; }
 
 .smart-code-support {
   font-family: Consolas, "Liberation Mono", Courier, monospace;
@@ -1546,7 +1550,7 @@ form .controls p {
   color: #c09853; }
 
 .notification-item {
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #eee;
   padding: 10px 0; }
   .notification-item .avatar {
     -webkit-border-radius: first-value-of(3px) first-value-of(3px);
@@ -1606,6 +1610,8 @@ form .controls p {
       .replies-lists .ui-content .reply-item .content blockquote p {
         font-size: 13px;
         line-height: 20px; }
+      .replies-lists .ui-content .reply-item .content iframe {
+        max-height: 135px; }
   .replies-lists .ui-footer {
     padding: 0 10px; }
 
@@ -1640,7 +1646,7 @@ form .controls p {
   font-size: 12px; }
 
 p {
-  margin: 0!important; }
+  margin: 0 !important; }
 
 textarea,
 input[type="text"],
@@ -1673,13 +1679,13 @@ input[type="color"],
   color: #555;
   font-size: 13px;
   text-decoration: none;
-  text-shadow: 0 1px 0 white;
+  text-shadow: 0 1px 0 #fff;
   background-color: #eaeaea;
   background-image: -moz-linear-gradient(#fafafa, #eaeaea);
   background-image: -webkit-linear-gradient(#fafafa, #eaeaea);
   background-image: linear-gradient(#fafafa, #eaeaea);
   background-repeat: repeat-x;
-  border: 1px solid #dddddd;
+  border: 1px solid #ddd;
   border-bottom: 1px solid #c5c5c5;
   margin-left: -1px; }
 .pagination ul > li a:hover {

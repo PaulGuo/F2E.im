@@ -137,7 +137,7 @@ class Filters():
         # render @ mention links
         content = re.sub(r'@(\w+)(\s|)', r'@<a href="/u/\1">\1</a> ', content)
         # render youku videos
-        content = re.sub(r'http://v.youku.com/v_show/id_(\w+).html', r'<embed src="http://player.youku.com/player.php/sid/\1/v.swf" quality="high" width="480" height="400" align="middle" allowScriptAccess="sameDomain" allowFullscreen="true" type="application/x-shockwave-flash"></embed>', content)
+        content = re.sub(r'http://v.youku.com/v_show/id_(\w+).html', r'<iframe height=498 width=510 src="http://player.youku.com/embed/\1" frameborder=0 allowfullscreen style="width:100%;max-width:510px;"></iframe>', content)
         return content
 
     def markdown(self, content):

@@ -727,6 +727,10 @@ a.btn {
                 margin: 0!important;
             }
         }
+
+        iframe {
+            max-height: 195px;
+        }
     }
 
     .ui-footer {
@@ -848,6 +852,10 @@ a.btn {
                     blockquote p {
                         font-size: 13px;
                         line-height: 20px;
+                    }
+
+                    iframe {
+                        max-height: 135px;
                     }
                 }
             }
@@ -1071,6 +1079,10 @@ form {
                 blockquote p {
                     font-size: 13px;
                     line-height: 20px;
+                }
+
+                iframe {
+                    max-height: 135px;
                 }
             }
         }
