@@ -1,0 +1,62 @@
+# coding: utf8
+from __future__ import print_function
+import os
+
+BASE_DIR = os.path.dirname(__file__)
+
+site = {
+    'title': 'God bless coders!',
+    'short_title': 'We love girls!',
+    'footer_html': '<span>Powered by Tornado</span>',
+    'navigation_bar': [
+        ('/', 'topic', '社区'),
+        ('/members', 'members', '成员'),
+        # ('/static/pages/timeline/index.html', 'timeline', '大事记'),
+        # ('/static/pages/nav/index.html', 'nav', '导航'),
+    ],
+    'version': '0.1.0-dev',
+    'friends': [
+        {'url': 'http://pyhack.org', 'img': '/static/images/python_china_logo.jpg', 'img_style': 'width:190px;',
+         'title': 'PyHack'},
+    ],
+    # 'weixin': {
+    #     'img': ''
+    # },
+}
+
+debug = True
+
+http = {
+    'port': 8888,
+}
+
+DATABASE = {
+    'default': {
+        'protocol': 'mysql',
+        'port': 3306,
+        'host': '127.0.0.1',
+        'db_name': 'f2e',
+        'user': 'root',
+        'password': 'qazsedcft',
+    }
+}
+
+memcached = [
+    '127.0.0.1:11211',
+]
+
+qiniu = {
+    'bucket': 'zoowiidevtest',
+    'domain': 'zoowiidevtest.qiniudn.com',
+    'access_key': '',
+    'secret_key': '',
+}
+
+app_settings = {
+    'debug': debug,
+    'template_path': os.path.join(BASE_DIR, 'templates'),
+    'static_path': os.path.join(BASE_DIR, 'static'),
+    'cookie_secret': 'Hi, lai 1 fa',
+    'xsrf_cookies': True,
+    'autoescape': None,
+}

@@ -1,0 +1,97 @@
+{% extends 'snippet/layout.html' %}
+
+{% block main %}
+<div class="topics container-box deprecated-mt10">
+    <hr/>
+    {% if is_new %}
+    <h2>Create Node</h2>
+    {% else %}
+    <h2>Edit Node {{ node['name'] }}</h2>
+    {% endif %}
+    <form class="form-horizontal" role="form" method="POST" action="/admin/node/{{ node['id'] }}">
+        {{ errors|dump_errors }}
+        <div class="control-group">
+            <label class="col-sm-2 control-label">ID</label>
+
+            <div class="controls">
+                <input type="text" disabled="disabled" value="{{ node['id'] }}"/>
+                <input type="hidden" name="id" value="{{ node['id'] }}"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="col-sm-2 control-label">Name</label>
+
+            <div class="controls">
+                <input type="text" name="name" value="{{ node['name'] }}" class="form-control" placeholder="Name"
+                       required="required">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="col-sm-2 control-label">Slug</label>
+
+            <div class="controls">
+                <input type="text" name="slug" class="form-control" value="{{ node['slug'] }}" placeholder="Slug">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="col-sm-2 control-label">Thumb</label>
+
+            <div class="controls">
+                <input type="text" name="thumb" class="form-control" value="{{ node['thumb'] }}"
+                       placeholder="Thumbnail">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="col-sm-2 control-label">Introduction</label>
+
+            <div class="controls">
+                <textarea class="form-control" rows="3" name="introduction">{{ node['introduction'] }}</textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="col-sm-2 control-label">Custom Style</label>
+
+            <div class="controls">
+                <textarea class="form-control" rows="6" name="custom_style">{{ node['custom_style'] }}</textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="col-sm-2 control-label">Plane Id</label>
+
+            <div class="controls">
+                <select name="plane_id">
+                    {% for plane in planes %}
+                    {% if plane['id'] == node['plane_id'] %}
+                    <option value="{{ plane['id'] }}" selected="selected">{{ plane['name'] }}</option>
+                    {% else %}
+                    <option value="{{ plane['id'] }}">{{ plane['name'] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="col-sm-2 control-label">Topic Count</label>
+
+            <div class="controls">
+                <input type="number" readonly name="topic_count" value="{{ node['topic_count'] or 0 }}"
+                       placeholder="Topic Count"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="col-sm-2 control-label">Limit Reputation</label>
+
+            <div class="controls">
+                <input type="number" name="limit_reputation" value="{{ node['limit_reputation'] or 0 }}"
+                       placeholder="Limit Reputation"/>
+            </div>
+        </div>
+        {{ xsrf_form_html() }}
+        <div class="control-group">
+            <div class="col-sm-offset-2 controls">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

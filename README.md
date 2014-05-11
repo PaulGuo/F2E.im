@@ -6,6 +6,11 @@ F2E is a community for front-end-developer.
 
 Fork and send pull request.
 
+## Danger
+
+* now every logined user can upload pictures as many as they want, without any limit
+* many SQL-injection danger
+
 ## How to run f2e.im on your own machine
 
 1. install all required modules:
@@ -26,10 +31,17 @@ Fork and send pull request.
     ```
 
 3. set your mysql user/password and smtp server config in `application.py` and `lib/sendmail.py`.
-4. check above, using ``python application.py`` to start server.
+
+4. cp settings.py.bak settings.py and modify settings.py as you like
+
+5. install rabbitmq-server and run it
+
+6. run ```celery -A tasks worker --loglevel=info```
+
+7. check above, using ``python application.py`` to start server.
 
     ```
-    shell> python application.py --port=9001 --mysql_database=f2e --mysql_host=localhost --mysql_password=YOURPASSWORD --mysql_user=YOURUSERNAME
+    shell> python application.py
     ```
 
 ## How to set up a production enironment

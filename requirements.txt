@@ -7,3 +7,8 @@ python-memcached
 mysql-python
 wtforms
 PIL
+easy_json
+qiniu
+psycopg2
+pymongo
+tornado-celery

@@ -197,3 +197,23 @@ CREATE TABLE `vote` (
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+-- ----------------------------
+--  Table structure for `picture`
+-- ----------------------------
+DROP TABLE IF EXISTS `picture`;
+CREATE TABLE `picture` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `version` int(11) DEFAULT 1,
+  `created_time` timestamp  default CURRENT_TIMESTAMP,
+  `creator_id` int(11) DEFAULT NULL,
+  `service` varchar(50) DEFAULT 'fs',
+  `store_key` varchar(50) NOT NULL,
+  `width` int(11) DEFAULT NULL,
+  `height` int(11) DEFAULT NULL,
+  `size` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+
+SET FOREIGN_KEY_CHECKS = 1;

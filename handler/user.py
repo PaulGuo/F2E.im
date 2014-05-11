@@ -10,18 +10,16 @@ import hashlib
 import Image
 import StringIO
 import time
-import json
-import re
-import urllib2
 import urllib
+
 import tornado.web
-import lib.jsonp
 
 from base import *
 from lib.sendmail import send
 from lib.variables import gen_random
 from lib.gravatar import Gravatar
 from form.user import *
+
 
 def do_login(self, user_id):
     user_info = self.user_model.get_user_by_uid(user_id)
@@ -32,6 +30,7 @@ def do_login(self, user_id):
     self.session["password"] = user_info["password"]
     self.session.save()
     self.set_secure_cookie("user", str(user_id))
+
 
 def do_logout(self):
     # destroy sessions
@@ -44,22 +43,24 @@ def do_logout(self):
     # destroy cookies
     self.clear_cookie("user")
 
+
 class HomeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         user_email = self.current_user['email']
         self.write(user_email)
 
+
 class SettingHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self, template_variables = {}):
+    def get(self, template_variables={}):
         user_info = self.get_current_user()
         template_variables["user_info"] = user_info
         template_variables["gen_random"] = gen_random
         self.render("user/setting.html", **template_variables)
 
     @tornado.web.authenticated
-    def post(self, template_variables = {}):
+    def post(self, template_variables={}):
         template_variables = {}
 
         # validate the fields
@@ -87,22 +88,24 @@ class SettingHandler(BaseHandler):
 
         template_variables["success_message"] = [u"用户基本资料更新成功"]
         # update `updated`
-        updated = self.user_model.set_user_base_info_by_uid(user_info["uid"], {"updated": time.strftime('%Y-%m-%d %H:%M:%S')})
+        updated = self.user_model.set_user_base_info_by_uid(user_info["uid"],
+                                                            {"updated": time.strftime('%Y-%m-%d %H:%M:%S')})
         self.get(template_variables)
+
 
 class SettingAvatarHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self, template_variables = {}):
+    def get(self, template_variables={}):
         user_info = self.get_current_user()
         template_variables["user_info"] = user_info
         template_variables["gen_random"] = gen_random
         self.render("user/setting_avatar.html", **template_variables)
 
     @tornado.web.authenticated
-    def post(self, template_variables = {}):
+    def post(self, template_variables={}):
         template_variables = {}
 
-        if(not "avatar" in self.request.files):
+        if (not "avatar" in self.request.files):
             template_variables["errors"] = {}
             template_variables["errors"]["invalid_avatar"] = [u"请先选择要上传的头像"]
             self.get(template_variables)
@@ -133,16 +136,17 @@ class SettingAvatarHandler(BaseHandler):
         updated = self.user_model.set_user_base_info_by_uid(user_id, {"updated": time.strftime('%Y-%m-%d %H:%M:%S')})
         self.get(template_variables)
 
+
 class SettingAvatarFromGravatarHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self, template_variables = {}):
+    def get(self, template_variables={}):
         user_info = self.current_user
         user_id = user_info["uid"]
         avatar_name = "%s" % uuid.uuid5(uuid.NAMESPACE_DNS, str(user_id))
         gravatar = Gravatar(user_info["email"])
-        avatar_96x96 = gravatar.get_image(size = 96, filetype_extension = False)
-        avatar_48x48 = gravatar.get_image(size = 48, filetype_extension = False)
-        avatar_32x32 = gravatar.get_image(size = 32, filetype_extension = False)
+        avatar_96x96 = gravatar.get_image(size=96, filetype_extension=False)
+        avatar_48x48 = gravatar.get_image(size=48, filetype_extension=False)
+        avatar_32x32 = gravatar.get_image(size=32, filetype_extension=False)
         urllib.urlretrieve(avatar_96x96, "./static/avatar/b_%s.png" % avatar_name)
         urllib.urlretrieve(avatar_48x48, "./static/avatar/m_%s.png" % avatar_name)
         urllib.urlretrieve(avatar_32x32, "./static/avatar/s_%s.png" % avatar_name)
@@ -154,16 +158,17 @@ class SettingAvatarFromGravatarHandler(BaseHandler):
         template_variables["gen_random"] = gen_random
         self.render("user/setting_avatar.html", **template_variables)
 
+
 class SettingPasswordHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self, template_variables = {}):
+    def get(self, template_variables={}):
         user_info = self.get_current_user()
         template_variables["user_info"] = user_info
         template_variables["gen_random"] = gen_random
         self.render("user/setting_password.html", **template_variables)
 
     @tornado.web.authenticated
-    def post(self, template_variables = {}):
+    def post(self, template_variables={}):
         template_variables = {}
 
         # validate the fields
@@ -181,7 +186,7 @@ class SettingPasswordHandler(BaseHandler):
         secure_password = hashlib.sha1(form.password_old.data).hexdigest()
         secure_new_password = hashlib.sha1(form.password.data).hexdigest()
 
-        if(not user_info["password"] == secure_password):
+        if (not user_info["password"] == secure_password):
             template_variables["errors"] = {}
             template_variables["errors"]["error_password"] = [u"当前密码输入有误"]
             self.get(template_variables)
@@ -195,12 +200,13 @@ class SettingPasswordHandler(BaseHandler):
         updated = self.user_model.set_user_base_info_by_uid(user_id, {"updated": time.strftime('%Y-%m-%d %H:%M:%S')})
         self.get(template_variables)
 
+
 class ForgotPasswordHandler(BaseHandler):
-    def get(self, template_variables = {}):
+    def get(self, template_variables={}):
         do_logout(self)
         self.render("user/forgot_password.html", **template_variables)
 
-    def post(self, template_variables = {}):
+    def post(self, template_variables={}):
         template_variables = {}
 
         # validate the fields
@@ -216,7 +222,7 @@ class ForgotPasswordHandler(BaseHandler):
 
         user_info = self.user_model.get_user_by_email_and_username(form.email.data, form.username.data)
 
-        if(not user_info):
+        if (not user_info):
             template_variables["errors"] = {}
             template_variables["errors"]["invalid_email_or_username"] = [u"所填用户名和邮箱有误"]
             self.get(template_variables)
@@ -239,12 +245,13 @@ class ForgotPasswordHandler(BaseHandler):
 
         self.get(template_variables)
 
+
 class LoginHandler(BaseHandler):
-    def get(self, template_variables = {}):
+    def get(self, template_variables={}):
         do_logout(self)
         self.render("user/login.html", **template_variables)
 
-    def post(self, template_variables = {}):
+    def post(self, template_variables={}):
         template_variables = {}
 
         # validate the fields
@@ -256,21 +263,23 @@ class LoginHandler(BaseHandler):
             return
 
         # continue while validate succeed
-        
+
         secure_password = hashlib.sha1(form.password.data).hexdigest()
         secure_password_md5 = hashlib.md5(form.password.data).hexdigest()
         user_info = self.user_model.get_user_by_email_and_password(form.email.data, secure_password)
         user_info = user_info or self.user_model.get_user_by_email_and_password(form.email.data, secure_password_md5)
-        
-        if(user_info):
+
+        if (user_info):
             do_login(self, user_info["uid"])
             # update `last_login`
-            updated = self.user_model.set_user_base_info_by_uid(user_info["uid"], {"last_login": time.strftime('%Y-%m-%d %H:%M:%S')})
+            updated = self.user_model.set_user_base_info_by_uid(user_info["uid"],
+                                                                {"last_login": time.strftime('%Y-%m-%d %H:%M:%S')})
             self.redirect(self.get_argument("next", "/"))
             return
 
         template_variables["errors"] = {"invalid_email_or_password": [u"邮箱或者密码不正确"]}
         self.get(template_variables)
+
 
 class LogoutHandler(BaseHandler):
     def get(self):
@@ -278,12 +287,29 @@ class LogoutHandler(BaseHandler):
         # redirect
         self.redirect(self.get_argument("next", "/"))
 
+
+class UserAdminHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        user = self.current_user
+        if user['role'] != self.user_model.admin_role:
+            return self.redirect('/')
+        paginator = self.paginator()
+        users = self.query_by_paginator(self.user_model, paginator)
+        data = {
+            'user': user,
+            'users': users,
+            'paginator': paginator,
+        }
+        self.render('admin/user_list.html', **data)
+
+
 class RegisterHandler(BaseHandler):
-    def get(self, template_variables = {}):
+    def get(self, template_variables={}):
         do_logout(self)
         self.render("user/register.html", **template_variables)
 
-    def post(self, template_variables = {}):
+    def post(self, template_variables={}):
         template_variables = {}
 
         # validate the fields
@@ -299,13 +325,13 @@ class RegisterHandler(BaseHandler):
         duplicated_email = self.user_model.get_user_by_email(form.email.data)
         duplicated_username = self.user_model.get_user_by_username(form.username.data)
 
-        if(duplicated_email or duplicated_username):
+        if (duplicated_email or duplicated_username):
             template_variables["errors"] = {}
 
-            if(duplicated_email):
+            if (duplicated_email):
                 template_variables["errors"]["duplicated_email"] = [u"所填邮箱已经被注册过"]
 
-            if(duplicated_username):
+            if (duplicated_username):
                 template_variables["errors"]["duplicated_username"] = [u"所填用户名已经被注册过"]
 
             self.get(template_variables)
@@ -313,7 +339,7 @@ class RegisterHandler(BaseHandler):
 
         # validate reserved
 
-        if(form.username.data in self.settings.get("reserved")):
+        if (form.username.data in self.settings.get("reserved")):
             template_variables["errors"] = {}
             template_variables["errors"]["reserved_username"] = [u"用户名被保留不可用"]
             self.get(template_variables)
@@ -330,12 +356,12 @@ class RegisterHandler(BaseHandler):
             "created": time.strftime('%Y-%m-%d %H:%M:%S')
         }
 
-        if(self.current_user):
+        if (self.current_user):
             return
-        
+
         user_id = self.user_model.add_new_user(user_info)
-        
-        if(user_id):
+
+        if (user_id):
             do_login(self, user_id)
 
             # send register success mail to user

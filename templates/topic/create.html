@@ -1,68 +1,85 @@
 {% extends 'snippet/layout.html' %}
 
 {% block javascript %}
-    <script type="text/x-mathjax-config">
+<script type="text/x-mathjax-config">
         MathJax.Hub.Config({
             tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
         });
-    </script>
-    <script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="/static/js/widget/emmet.min.js"></script>
-    <script type="text/javascript" src="/static/js/widget/jquery.textarea.min.js"></script>
-    <script type="text/javascript">
-        jQuery(document).ready(function() {
-            $('textarea.smart-code-support').tabby();
-            emmet.require('textarea').setup({
-                pretty_break: false, // enable formatted line breaks (when inserting // between opening and closing tag)
-                use_tab: false       // expand abbreviations by Tab key
-            });
+
+</script>
+<script type="text/javascript"
+        src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/javascript" src="/static/js/widget/emmet.min.js"></script>
+<script type="text/javascript" src="/static/js/widget/jquery.textarea.min.js"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $('textarea.smart-code-support').tabby();
+        emmet.require('textarea').setup({
+            pretty_break: false, // enable formatted line breaks (when inserting // between opening and closing tag)
+            use_tab: false       // expand abbreviations by Tab key
         });
-    </script>
+    });
+</script>
 {% endblock %}
 
 {% block main %}
-    <div class="topic-create container-box">
-        <div class="ui-header">
-            <span class="title">创建新主题</span>
-        </div>
-
-        <div class="ui-content">
-            <form class="mt10" action="/t/create/{{ node_slug }}" method="post">
-                {{ errors|dump_errors }}
-                <div class="input-prepend mt10">
-                    <span class="add-on">#</span>
-                    <input class="span11" id="prependedInput" type="text" placeholder="主题" name="title">
-                </div>
-                <textarea rows="3" class="content mt5 smart-code-support" placeholder="正文" name="content"></textarea>
-                <input type="submit" id="checkall" class="btn btn-small" value="立即创建">
-                {{ xsrf_form_html() }}
-            </form>
-        </div>
+<div class="topic-create container-box">
+    <div class="ui-header">
+        <span class="title">创建新主题</span>
     </div>
+    <div class="ui-content">
+        <iframe src="" name="post-image-iframe" style="display: none"></iframe>
+        <form class="upload-picture-form"
+              action="/resource/picture/upload_async"
+              method="POST"
+              enctype="multipart/form-data"
+              target="post-image-iframe">
+            <input type="hidden" name="callback" value="uploadImageCallback">
+            <input type="file" name="files[]" multiple style="display: none">
+            {{ xsrf_form_html() }}
+        </form>
+        <form class="mt10" action="/t/create/{{ node_slug }}" method="post">
+            {{ errors|dump_errors }}
+            <div class="input-prepend mt10">
+                <span class="add-on">#</span>
+                <input class="span11" id="prependedInput" type="text" placeholder="主题" name="title">
+            </div>
+            <div class="well">
+                <button class="btn btn-small btn-success upload-picture-btn">Upload Picture</button>
+            </div>
+            <textarea rows="3" class="content mt5 smart-code-support" placeholder="正文" name="content"></textarea>
+            <input type="submit" id="checkall" class="btn btn-small" value="立即创建">
+            {{ xsrf_form_html() }}
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block sidebar %}
-    <div class="usercard container-box">
-        <div class="ui-header">
-            <a href="/u/{{ user_info.username }}">
-                <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt="" class="avatar" />
-            </a>
-            <div class="username">{{ user_info.username }}</div>
-            <div class="website"><a href="{{ user_info.website or '' }}">{{ user_info.website or '' }}</a></div>
+<div class="usercard container-box">
+    <div class="ui-header">
+        <a href="/u/{{ user_info.username }}">
+            <img src="/static/avatar/m_{{ user_info.avatar or 'default.png' }}?t={{ gen_random() }}" alt=""
+                 class="avatar"/>
+        </a>
+
+        <div class="username">{{ user_info.username }}</div>
+        <div class="website"><a href="{{ user_info.website or '' }}">{{ user_info.website or '' }}</a></div>
+    </div>
+    <div class="ui-content">
+        <div class="status status-topic">
+            <strong><a href="/u/{{ user_info.username }}/topics">{{ user_info.counter.topics }}</a></strong> 主题
         </div>
-        <div class="ui-content">
-            <div class="status status-topic">
-                <strong><a href="/u/{{ user_info.username }}/topics">{{ user_info.counter.topics }}</a></strong> 主题
-            </div>
-            <div class="status status-reply">
-                <strong><a href="/u/{{ user_info.username }}/replies">{{ user_info.counter.replies }}</a></strong> 回复
-            </div>
-            <div class="status status-favorite">
-                <strong><a href="/u/{{ user_info.username }}/favorites">{{ user_info.counter.favorites }}</a></strong> 收藏
-            </div>
-            <div class="status status-reputation">
-                <strong>{{ user_info.reputation or 0 }}</strong> 威望
-            </div>
+        <div class="status status-reply">
+            <strong><a href="/u/{{ user_info.username }}/replies">{{ user_info.counter.replies }}</a></strong> 回复
+        </div>
+        <div class="status status-favorite">
+            <strong><a href="/u/{{ user_info.username }}/favorites">{{ user_info.counter.favorites }}</a></strong> 收藏
+        </div>
+        <div class="status status-reputation">
+            <strong>{{ user_info.reputation or 0 }}</strong> 威望
         </div>
     </div>
+</div>
+<script src="/static/js/create_or_edit_topic.js"></script>
 {% endblock %}

@@ -5,8 +5,8 @@
 # Do have a faith in what you're doing.
 # Make your life a story worth telling.
 
-import time
 from lib.query import Query
+
 
 class PlaneModel(Query):
     def __init__(self, db):
@@ -35,4 +35,15 @@ class PlaneModel(Query):
             plane["nodes"] = self.table("node").where(where).select()
 
         return planes
+
+    def get_plane_by_id(self, id):
+        where = "id = %s" % str(id)
+        return self.where(where).find()
+
+    def add_new_plane(self, info):
+        return self.data(info).add()
+
+    def update_plane(self, id, info):
+        where = "id=%s" % str(id)
+        return self.data(info).where(where).save()
 

@@ -44,3 +44,10 @@ env/
 *.swp
 *.sccsc
 *~
+/.idea
+/*.iml
+/*.out
+/*.log
+/*.pid
+/#application.py#
+/settings.py

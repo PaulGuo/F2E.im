@@ -2,8 +2,8 @@
     <div class="container">
         <div class="footer-bg">
             <p class="links">
-                <span>©2012-2013 F2E.im</span>
-                <span>Powered by Tornado on Linode</span>
+                <span>©2012-2013 {{ site_settings['short_title'] }}</span>
+                {{ site_settings['footer_html'] }}
                 <span>, All rights reserved.</span>
             </p>
             {#
@@ -19,9 +19,9 @@
             #}
             <p class="fade-color">
                 {#
-                <span># version 0.1.0-dev</span>
+                <span># version {{ site_settings['version'] }}</span>
                 #}
-                <span>Bitcoin Donation: 1MqzGbsAufs3gCFEqqTM9WBNnRmVFu7HWH</span>
+                <span>Bitcoin Donation: Fuck Bitcoin!</span>
             </p>
         </div>
     </div>

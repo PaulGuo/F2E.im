@@ -2,22 +2,23 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
-    <meta content="yes" name="apple-mobile-web-app-capable" />
-    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
-    <meta name="format-detection" content="telephone=no" />
-    <title>{% block title %}F2E - 前端技术社区{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+    <meta content="yes" name="apple-mobile-web-app-capable"/>
+    <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>{% block title %}{{ site_settings['title'] }}{% endblock %}</title>
+    <script src="/static/js/base/underscore.min.js"></script>
     <script type="text/javascript" src="/static/js/base/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="/static/js/base/bootstrap.min.js"></script>
     <script type="text/javascript" src="/static/js/base/in-min.js"></script>
-    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="/static/css/main.css?t=20130807001.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/static/css/main.css?t=20130807001.css"/>
     <link rel="apple-touch-icon" href="/static/images/f2e.im.icon.png">
     {% block stylesheet %}{% endblock %}
     {% block javascript %}{% endblock %}
     <script type="text/javascript">
-        jQuery(document).ready(function() {
-            $('.J_search').submit(function(e) {
+        jQuery(document).ready(function () {
+            $('.J_search').submit(function (e) {
                 var _node = $(this);
                 var query = _node.find('input').val();
                 e.preventDefault();
@@ -44,7 +45,7 @@
     </style>
     {#
     <script type="text/javascript">
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             $.scrolltotop({
                 className: 'totop',
                 controlHTML: '<a href="javascript:;">回到顶部↑</a>',
@@ -55,7 +56,7 @@
     #}
 </head>
 <body>
-    
+
 <div class="navbar navbar-inverse navbar-fixed-top top-navbar">
     <div class="navbar-inner">
         <div class="container">
@@ -64,44 +65,42 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="/">F2E</a>
+            <a class="brand" href="/">{{ site_settings['short_title'] }}</a>
+
             <div class="divider-vertical"></div>
             {% if current_user %}
-                {% if notifications_count %}
-                    <a href="/notifications" class="notification-indicator tooltipped downwards contextually-unread" title="{{ current_user.nickname or current_user.username }}，你有{{ notifications_count }}条未读提醒，去看看吧">
-                        <span class="mail-status unread"></span>
-                    </a>
-                {% else %}
-                    <a href="/notifications" class="notification-indicator tooltipped downwards" title="暂时没有未读提醒">
-                        <span class="mail-status"></span>
-                    </a>
-                {% endif %}
-                <div class="divider-vertical"></div>
+            {% if notifications_count %}
+            <a href="/notifications" class="notification-indicator tooltipped downwards contextually-unread"
+               title="{{ current_user.nickname or current_user.username }}，你有{{ notifications_count }}条未读提醒，去看看吧">
+                <span class="mail-status unread"></span>
+            </a>
+            {% else %}
+            <a href="/notifications" class="notification-indicator tooltipped downwards" title="暂时没有未读提醒">
+                <span class="mail-status"></span>
+            </a>
+            {% endif %}
+            <div class="divider-vertical"></div>
             {% endif %}
             <div class="nav-collapse collapse">
-            
+
                 {% set navigation_bar = [
-                    ('/', 'topic', '社区'),
-                    ('/members', 'members', '成员'),
-                    ('/hots', 'hots', '热门'),
-                    ('/nodes', 'nodes', '结点'),
-                    ('/info', 'info', '信息'),
-                ] -%}
-            
-                {% set navigation_bar = [
-                    ('/', 'topic', '社区'),
-                    ('/members', 'members', '成员'),
-                    ('/static/pages/timeline/index.html', 'timeline', '大事记'),
-                    ('/static/pages/nav/index.html', 'nav', '导航'),
+                ('/', 'topic', '社区'),
+                ('/members', 'members', '成员'),
+                ('/hots', 'hots', '热门'),
+                ('/nodes', 'nodes', '结点'),
+                ('/info', 'info', '信息'),
                 ] -%}
 
+                {% set navigation_bar = site_settings['navigation_bar'] -%}
+
                 {% set active_page = active_page|default('index') -%}
-                
+
                 <ul class="nav">
                     {% for href, id, caption in navigation_bar %}
-                        <li{% if id == active_page %} class="active"{% endif %}>
-                            <a href="{{ href|e }}">{{ caption|e }}</a>
-                        </li>
+                    <li
+                    {% if id == active_page %} class="active"{% endif %}>
+                    <a href="{{ href|e }}">{{ caption|e }}</a>
+                    </li>
                     {% endfor %}
                 </ul>
             </div>
@@ -112,29 +111,31 @@
             <div class="nav-collapse collapse pull-right">
                 <ul class="nav account-menu">
                     {% if current_user %}
-                        <li>
-                            <a href="/u/{{ current_user.username or current_user.uid }}" class="avatar">
-                                <img src="/static/avatar/s_{{ current_user.avatar or 'default.png' }}?t={{ gen_random() }}" width="20" height="20">
-                            </a>
-                        </li>
-                        <li><a href="/u/{{ current_user.username or current_user.uid }}">{{ current_user.username }}</a></li>
-                        <li>
-                            <a href="/setting">
-                                <span class="octicon octicon-tools"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/logout">
-                                <span class="octicon octicon-log-out"></span>
-                            </a>
-                        </li>
+                    <li>
+                        <a href="/u/{{ current_user.username or current_user.uid }}" class="avatar">
+                            <img src="/static/avatar/s_{{ current_user.avatar or 'default.png' }}?t={{ gen_random() }}"
+                                 width="20" height="20">
+                        </a>
+                    </li>
+                    <li><a href="/u/{{ current_user.username or current_user.uid }}">{{ current_user.username }}</a>
+                    </li>
+                    <li>
+                        <a href="/setting">
+                            <span class="octicon octicon-tools"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/logout">
+                            <span class="octicon octicon-log-out"></span>
+                        </a>
+                    </li>
                     {% else %}
-                        <li>
-                            <a href="/login">
-                                <span class="octicon octicon-log-in"></span>
-                            </a>
-                        </li>
-                        <li><a href="/register" class="btn btn-small">注册</a></li>
+                    <li>
+                        <a href="/login">
+                            <span class="octicon octicon-log-in"></span>
+                        </a>
+                    </li>
+                    <li><a href="/register" class="btn btn-small">注册</a></li>
                     {% endif %}
                 </ul>
             </div>

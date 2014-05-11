@@ -4,14 +4,14 @@
 # Copyright 2012 F2E.im
 # Do have a faith in what you're doing.
 # Make your life a story worth telling.
+from __future__ import print_function
 
-import json
-import re
+from jinja2 import evalcontextfilter, Markup, escape
+from markdown import markdown
 
 from lib.variables import *
 from lib.superjson import dumps
-from jinja2 import evalcontextfilter, Markup, escape
-from markdown import markdown
+
 
 class Filters():
     def __init__(self, jinja2_env):
@@ -41,14 +41,14 @@ class Filters():
             {% endif %}
             """)
 
-        return t.render(errors = errors)
+        return t.render(errors=errors)
 
-    def pagination(self, page, uri, list_rows = 10):
-        def gen_page_list(current_page = 1, total_page = 1, list_rows = 10):
-            if(total_page <= list_rows):
+    def pagination(self, page, uri, list_rows=10):
+        def gen_page_list(current_page=1, total_page=1, list_rows=10):
+            if (total_page <= list_rows):
                 return range(1, total_page + 1)
 
-            if(current_page + list_rows > total_page):
+            if (current_page + list_rows > total_page):
                 return range(total_page - list_rows + 1, list_rows + 1)
 
             return range(current_page, list_rows + 1)
@@ -71,7 +71,7 @@ class Filters():
             {% endif %}
             """)
 
-        return t.render(page = page, uri = uri, gen_page_list = gen_page_list, list_rows = list_rows)
+        return t.render(page=page, uri=uri, gen_page_list=gen_page_list, list_rows=list_rows)
 
     @evalcontextfilter
     def nl2br(self, eval_ctx, value):
@@ -81,7 +81,7 @@ class Filters():
             result = Markup(result)
         return result
 
-    def pretty_date(self, time = False):
+    def pretty_date(self, time=False):
         """
         Get a datetime object or a int() Epoch timestamp and return a
         pretty string like 'an hour ago', 'Yesterday', '3 months ago',
@@ -91,13 +91,14 @@ class Filters():
             return time
 
         from datetime import datetime
+
         now = datetime.now()
         if type(time) is str or type(time) is unicode:
             time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
         elif type(time) is int:
             diff = now - datetime.fromtimestamp(time)
         elif isinstance(time, datetime):
-            diff = now - time 
+            diff = now - time
         elif not time:
             diff = now - now
         second_diff = diff.seconds
@@ -112,7 +113,7 @@ class Filters():
             if second_diff < 60:
                 return str(second_diff) + " 秒前"
             if second_diff < 120:
-                return  "1 分钟前"
+                return "1 分钟前"
             if second_diff < 3600:
                 return str(second_diff / 60) + " 分钟前"
             if second_diff < 7200:
@@ -131,19 +132,22 @@ class Filters():
 
     def content_process(self, content):
         # render content included gist
-        content = re.sub(r'http(s)?:\/\/gist.github.com\/(\d+)(.js)?', r'<script src="http://gist.github.com/\2.js"></script>', content)
+        content = re.sub(r'http(s)?:\/\/gist.github.com\/(\d+)(.js)?',
+                         r'<script src="http://gist.github.com/\2.js"></script>', content)
         # render sinaimg pictures
         content = re.sub(r'(http:\/\/\w+.sinaimg.cn\/.*?\.(jpg|gif|png))', r'<img src="\1" />', content)
         # render @ mention links
         content = re.sub(r'@(\w+)(\s|)', r'@<a href="/u/\1">\1</a> ', content)
         # render youku videos
-        content = re.sub(r'http://v.youku.com/v_show/id_(\w+).html', r'<iframe height=498 width=510 src="http://player.youku.com/embed/\1" frameborder=0 allowfullscreen style="width:100%;max-width:510px;"></iframe>', content)
+        content = re.sub(r'http://v.youku.com/v_show/id_(\w+).html',
+                         r'<iframe height=498 width=510 src="http://player.youku.com/embed/\1" frameborder=0 allowfullscreen style="width:100%;max-width:510px;"></iframe>',
+                         content)
         return content
 
     def markdown(self, content):
         if not content:
             return ""
-        return markdown(content, extensions = ['codehilite', 'fenced_code', 'mathjax'], safe_mode = 'escape')
+        return markdown(content, extensions=['codehilite', 'fenced_code', 'mathjax'], safe_mode='escape')
 
     def email_mosaic(self, email):
         if not email:

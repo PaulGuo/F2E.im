@@ -7,11 +7,17 @@
 
 from lib.query import Query
 
+
 class UserModel(Query):
+    admin_role = 007
+
     def __init__(self, db):
         self.db = db
         self.table_name = "user"
         super(UserModel, self).__init__()
+
+    def find_by_paginator(self, paginator):
+        return self.where('1=1').limit(paginator.skipped_count, paginator.page_size).select()
 
     def get_user_by_uid(self, uid):
         where = "uid = %s" % uid
@@ -70,20 +76,23 @@ class UserModel(Query):
         }).where(where).save()
 
     def add_new_user(self, info):
+        if self.get_all_users_count() < 1:
+            info['role'] = self.admin_role
         return self.data(info).add()
 
-    def get_user_info_by_open_id(self, openId, source = 0):
-        where = "openid='%s' AND source=%s" % (openId, source)
+    def get_user_info_by_open_id(self, open_id, source=0):
+        where = "openid='%s' AND source=%s" % (open_id, source)
         return self.where(where).find()
 
-    def get_users_by_latest(self, num = 16):
+    def get_users_by_latest(self, num=16):
         order = "uid DESC"
-        return self.order(order).limit(num).pages(list_rows = num)
+        return self.order(order).limit(num).pages(list_rows=num)
 
     def get_all_users_count(self):
         return self.count()
 
-    def get_users_by_last_login(self, num = 16):
+    def get_users_by_last_login(self, num=16):
         order = "last_login DESC"
-        return self.order(order).limit(num).pages(list_rows = num)
+        return self.order(order).limit(num).pages(list_rows=num)
+
 
