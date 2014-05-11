@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="pia-cloud">
+    <link rel="shortcut icon" href="/static/images/f2e.im.icon.png">
+    <!--<link rel="stylesheet" href="/static/bootstrap3/css/bootstrap-datepicker3.css"/>-->
+    <script src="/static/js/base/jquery-1.8.3.min.js"></script>
+    <script src="/static/bootstrap3/js/bootstrap.min.js"></script>
+    <script src="/static/js/base/underscore.min.js"></script>
+    <title>
+        {% block title %}
+        {{ site_settings['title'] }}
+        {% endblock %}
+    </title>
+    <link href="/static/bootstrap3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css"/>
+    <link href="/static/css/website.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/static/js/html5shiv.js"></script>
+    <script src="/static/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+{% block header %}
+<div class="blog-masthead">
+    <div class="container">
+        <nav class="blog-nav">
+            <a class="blog-nav-item site-title-link" href="/">Index</a>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+
+<div class="container">
+    <div class="" style="width: 750px; margin: 0 auto">
+        {% block container %}{% endblock %}
+    </div>
+</div>
+{% block footer %}
+<div class="blog-footer">
+    <p>Author: <a href="#">@pia-pia</a></p>
+</div>
+{% endblock %}
+</body>
+</html>

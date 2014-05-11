@@ -1,0 +1,30 @@
+{% extends 'snippet/website.html' %}
+
+{% block container %}
+<!--<div class="topics container-box deprecated-mt10">-->
+<!--<hr/>-->
+<div>
+    <a href="/admin/plane/new">New</a>
+</div>
+<hr/>
+<table class="table table-bordered table-striped">
+    <thead>
+    <th>ID</th>
+    <th>name</th>
+    <th></th>
+    </thead>
+    <tbody>
+    {% for plane in planes %}
+    <tr>
+        <td>{{ plane['id'] }}</td>
+        <td>{{ plane['name'] }}</td>
+        <th><a href="/admin/plane/{{ plane['id'] }}">Edit</a></th>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div>
+    {{ paginator.pagination_html }}
+</div>
+<!--</div>-->
+{% endblock %}

@@ -7,13 +7,13 @@
 
 # cat /etc/mime.types
 # application/octet-stream    crx
-
+from __future__ import print_function
 import sys
+
 reload(sys)
 sys.setdefaultencoding("utf8")
 
 import os.path
-import re
 import memcache
 import torndb
 import tornado.httpserver
@@ -27,30 +27,35 @@ import handler.topic
 import handler.page
 import handler.notification
 
-from tornado.options import define, options
+from tornado.options import options
 from lib.loader import Loader
-from lib.session import Session, SessionManager
+from lib.session import SessionManager
 from jinja2 import Environment, FileSystemLoader
+import tcelery
 
-define("port", default = 80, help = "run on the given port", type = int)
-define("mysql_host", default = "mysql_host", help = "community database host")
-define("mysql_database", default = "mysql_db_name", help = "community database name")
-define("mysql_user", default = "mysql_db_user", help = "community database user")
-define("mysql_password", default = "mysql_db_password", help = "community database password")
+import settings
+
+db_default = settings.DATABASE['default']
+# define("port", default=settings.http['port'], help="run on the given port", type=int)
+# define("mysql_host", default=db_default['host'], help="community database host")
+# define("mysql_database", default=db_default['db_name'], help="community database name")
+# define("mysql_user", default=db_default['user'], help="community database user")
+# define("mysql_password", default=db_default['password'], help="community database password")
+
+
+tcelery.setup_nonblocking_producer()
+
 
 class Application(tornado.web.Application):
     def __init__(self):
-        settings = dict(
-            blog_title = u"F2E Community",
-            template_path = os.path.join(os.path.dirname(__file__), "templates"),
-            static_path = os.path.join(os.path.dirname(__file__), "static"),
-            xsrf_cookies = True,
-            cookie_secret = "cookie_secret_code",
-            login_url = "/login",
-            autoescape = None,
-            jinja2 = Environment(loader = FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")), trim_blocks = True),
-            reserved = ["user", "topic", "home", "setting", "forgot", "login", "logout", "register", "admin"],
+        app_settings = dict(
+            blog_title=settings.site['title'],
+            login_url="/login",
+            jinja2=Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")),
+                               trim_blocks=True),
+            reserved=["user", "topic", "home", "setting", "forgot", "login", "logout", "register", "admin"],
         )
+        app_settings.update(settings.app_settings)
 
         handlers = [
             (r"/", handler.topic.IndexHandler),
@@ -77,18 +82,28 @@ class Application(tornado.web.Application):
             (r"/logout", handler.user.LogoutHandler),
             (r"/register", handler.user.RegisterHandler),
 
-            (r"/(favicon\.ico)", tornado.web.StaticFileHandler, dict(path = settings["static_path"])),
-            (r"/(sitemap.*$)", tornado.web.StaticFileHandler, dict(path = settings["static_path"])),
-            (r"/(bdsitemap\.txt)", tornado.web.StaticFileHandler, dict(path = settings["static_path"])),
+            (r'/admin/user$', handler.user.UserAdminHandler),
+            (r'/admin/node$', handler.topic.NodeAdminHandler),
+            (r'/admin/node/new$', handler.topic.NodeEditHandler),
+            (r'/admin/node/(\d+)$', handler.topic.NodeEditHandler),
+            (r'/admin/plane$', handler.topic.PlaneAdminHandler),
+            (r'/admin/plane/new$', handler.topic.PlaneEditHandler),
+            (r'/admin/plane/(\d+)$', handler.topic.PlaneEditHandler),
+
+            (r'/resource/picture/upload_async', handler.page.PictureIframeUploadHandler),
+
+            (r"/(favicon\.ico)", tornado.web.StaticFileHandler, dict(path=app_settings["static_path"])),
+            (r"/(sitemap.*$)", tornado.web.StaticFileHandler, dict(path=app_settings["static_path"])),
+            (r"/(bdsitemap\.txt)", tornado.web.StaticFileHandler, dict(path=app_settings["static_path"])),
             (r"/(.*)", handler.topic.ProfileHandler),
         ]
 
-        tornado.web.Application.__init__(self, handlers, **settings)
+        tornado.web.Application.__init__(self, handlers, **app_settings)
 
         # Have one global connection to the blog DB across all handlers
         self.db = torndb.Connection(
-            host = options.mysql_host, database = options.mysql_database,
-            user = options.mysql_user, password = options.mysql_password
+            host=db_default['host'], database=db_default['db_name'],
+            user=db_default['user'], password=db_default['password']
         )
 
         # Have one global loader for loading models and handles
@@ -103,18 +118,23 @@ class Application(tornado.web.Application):
         self.notification_model = self.loader.use("notification.model")
         self.vote_model = self.loader.use("vote.model")
         self.favorite_model = self.loader.use("favorite.model")
+        self.picture_model = self.loader.use('picture.model')
 
         # Have one global session controller
-        self.session_manager = SessionManager(settings["cookie_secret"], ["127.0.0.1:11211"], 0)
+        self.session_manager = SessionManager(app_settings["cookie_secret"], settings.memcached, 0)
 
         # Have one global memcache controller
-        self.mc = memcache.Client(["127.0.0.1:11211"])
+        self.mc = memcache.Client(settings.memcached)
+
 
 def main():
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
+    port = settings.http['port']
+    http_server.listen(port)
+    print("http listen at http://localhost:%d" % port)
     tornado.ioloop.IOLoop.instance().start()
+
 
 if __name__ == "__main__":
     main()

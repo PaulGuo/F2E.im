@@ -1,0 +1,40 @@
+{% extends 'snippet/website.html' %}
+
+{% block container %}
+<!--<div class="topics container-box deprecated-mt10">-->
+<!--<hr/>-->
+<div>
+    <a href="/admin/node/new">New</a>
+</div>
+<hr/>
+<table class="table table-bordered table-striped">
+    <thead>
+    <th>ID</th>
+    <th>name</th>
+    <th>slug</th>
+    <th>thumb</th>
+    <th>introduction</th>
+    <th>plane</th>
+    <th>topic_count</th>
+    <th></th>
+    </thead>
+    <tbody>
+    {% for node in nodes %}
+    <tr>
+        <td>{{ node['id'] }}</td>
+        <td>{{ node['name'] }}</td>
+        <td>{{ node['slug'] }}</td>
+        <td>{{ node['thumb'] }}</td>
+        <td>{{ node['introduction'] }}</td>
+        <td>{{ node['plane']['name'] if node['plane'] else '' }}</td>
+        <td>{{ node['topic_count'] }}</td>
+        <td><a href="/admin/node/{{ node['id'] }}">Edit</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div>
+    {{ paginator.pagination_html }}
+</div>
+<!--</div>-->
+{% endblock %}

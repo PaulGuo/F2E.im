@@ -5,10 +5,15 @@
 # Do have a faith in what you're doing.
 # Make your life a story worth telling.
 
+import json
+
 import tornado.web
+
 import lib.session
-import time
 import helper
+import settings
+from lib import utils
+
 
 class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *argc, **argkw):
@@ -20,6 +25,10 @@ class BaseHandler(tornado.web.RequestHandler):
     @property
     def db(self):
         return self.application.db
+
+    @property
+    def picture_model(self):
+        return self.application.picture_model
 
     @property
     def user_model(self):
@@ -75,9 +84,58 @@ class BaseHandler(tornado.web.RequestHandler):
         template_vars["current_user"] = self.current_user
         template_vars["request"] = self.request
         template_vars["request_handler"] = self
+        template_vars['settings'] = settings.app_settings
+        template_vars['site_settings'] = settings.site
         template = self.jinja2.get_template(template_name)
         return template.render(**template_vars)
 
     def render_from_string(self, template_string, **template_vars):
         template = self.jinja2.from_string(template_string)
         return template.render(**template_vars)
+
+    def paginator(self):
+        """
+        create paginator from request
+        """
+        data = {
+            'page': self.get_argument('page', None),
+            'page_size': self.get_argument('page_size', None),
+            'extra_url_params': self.get_argument('extra_url_params', None),
+            'pagination_display_count': self.get_argument('pagination_display_count', None),
+        }
+        p_data = dict()
+        for k in data.keys():
+            if data[k] is not None:
+                p_data[k] = data[k]
+        pg = utils.Paginator(**p_data)
+        return pg
+
+    def query_by_paginator(self, model, paginator):
+        q = model.where('1=1').limit(paginator.skipped_count, paginator.page_size)
+        records = q.select()
+        paginator.total_count = q.count()
+        return records
+
+    def ajax_response(self, success, data=None, code=0):
+        """
+        send ajax response with format {success: true/false, data: content, code: error code of type int
+        code:
+        0: success:
+        1: common error code which might be any kind of error
+        2: login required or permission denied
+        3: login required
+        4: permission denied
+        [5, ...): other fail error code
+        """
+        res = {
+            'success': success,
+            'data': data,  # JSON.to_json(data)
+            'code': code,
+        }
+        self.write(json.dumps(res))
+
+    def ajax_success(self, data=None, code=0):
+        self.ajax_response(True, data, code)
+
+    def ajax_fail(self, data=None, code=1):
+        self.ajax_response(False, data, code)

@@ -4,9 +4,9 @@
 # Copyright 2012 F2E.im
 # Do have a faith in what you're doing.
 # Make your life a story worth telling.
-
-import time
+from __future__ import print_function
 from lib.query import Query
+
 
 class NodeModel(Query):
     def __init__(self, db):
@@ -28,6 +28,10 @@ class NodeModel(Query):
         where = "slug = '%s'" % node_slug
         return self.where(where).find()
 
+    def get_node_by_id(self, node_id):
+        where = "id=%s" % str(node_id)
+        return self.where(where).find()
+
     def get_all_hot_nodes(self):
         where = "topic.reply_count > 0"
         join = "LEFT JOIN topic ON node.id = topic.node_id"
@@ -35,3 +39,9 @@ class NodeModel(Query):
         group = "node.id"
         return self.where(where).join(join).order(order).group(group).limit(16).select()
 
+    def add_new_node(self, info):
+        return self.data(info).add()
+
+    def update_node(self, id, info):
+        where = 'id = %s' % str(id)
+        return self.data(info).where(where).save()

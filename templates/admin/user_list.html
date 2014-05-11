@@ -1,0 +1,27 @@
+{% extends 'snippet/website.html' %}
+
+{% block container %}
+<table class="table table-bordered table-striped">
+    <thead>
+    <th>ID</th>
+    <th>username</th>
+    <th>nickname</th>
+    <th>Email</th>
+    <th>role</th>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <td>{{ user['uid'] }}</td>
+        <td>{{ user['username'] }}</td>
+        <td>{{ user['nickname'] }}</td>
+        <td>{{ user['email'] }}</td>
+        <td>{{ user['role'] }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+        <div>
+            {{ paginator.pagination_html }}
+        </div>
+{% endblock %}
