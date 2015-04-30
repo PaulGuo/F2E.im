@@ -147,7 +147,7 @@ class Query(object):
         return self.db.query(sql)
 
     def grasp(self, sql):
-        select_regx = re.compile("SELECT (COUNT\()?(?P<field>[\w\*\s\.,]+)\)? FROM (?P<table_name>.*?)(LIMIT|ORDER|GROUP|HAVING|WHERE|LEFT|RIGHT|INNER|$)", re.I)
+        select_regx = re.compile("SELECT (?P<field>[\w\*\s\.|COUNT\(\w\*\s\.\),]+) FROM (?P<table_name>.*?)(LIMIT|ORDER|GROUP|HAVING|WHERE|LEFT|RIGHT|INNER|$)", re.I)
         where_complex_regx = re.compile("WHERE (?P<condition>.*?)(LIMIT|ORDER|GROUP|HAVING|LEFT|RIGHT|INNER)", re.I)
         where_regx = re.compile("WHERE (?P<condition>.*)", re.I)
         limit_regx = re.compile("LIMIT (?P<start>\d+),?\s*(?P<end>\d+)?", re.I)
